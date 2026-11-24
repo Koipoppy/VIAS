@@ -1,0 +1,221 @@
+{
+  "$defs": {
+    "Credibility": {
+      "description": "Six-dimension credibility used by the project's technical route.",
+      "properties": {
+        "source_reliability": {
+          "title": "Source Reliability",
+          "type": "number"
+        },
+        "authority": {
+          "title": "Authority",
+          "type": "number"
+        },
+        "objectivity": {
+          "title": "Objectivity",
+          "type": "number"
+        },
+        "timeliness": {
+          "title": "Timeliness",
+          "type": "number"
+        },
+        "completeness": {
+          "title": "Completeness",
+          "type": "number"
+        },
+        "consistency": {
+          "title": "Consistency",
+          "type": "number"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "source_reliability",
+        "authority",
+        "objectivity",
+        "timeliness",
+        "completeness",
+        "consistency",
+        "score",
+        "weight"
+      ],
+      "title": "Credibility",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "default": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "evidence_id": {
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "modality": {
+      "enum": [
+        "text",
+        "image",
+        "audio",
+        "behavior",
+        "metadata"
+      ],
+      "title": "Modality",
+      "type": "string"
+    },
+    "source_type": {
+      "title": "Source Type",
+      "type": "string"
+    },
+    "source_name": {
+      "title": "Source Name",
+      "type": "string"
+    },
+    "content": {
+      "additionalProperties": true,
+      "title": "Content",
+      "type": "object"
+    },
+    "raw_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw Ref"
+    },
+    "time_range": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Range"
+    },
+    "language": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language"
+    },
+    "gender_probs": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gender Probs"
+    },
+    "age_probs": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Age Probs"
+    },
+    "credibility": {
+      "$ref": "#/$defs/Credibility"
+    },
+    "supports": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Supports",
+      "type": "array"
+    },
+    "contradicts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Contradicts",
+      "type": "array"
+    },
+    "conflict_flag": {
+      "default": false,
+      "title": "Conflict Flag",
+      "type": "boolean"
+    },
+    "conflict_degree": {
+      "default": 0.0,
+      "title": "Conflict Degree",
+      "type": "number"
+    },
+    "injected": {
+      "default": false,
+      "title": "Injected",
+      "type": "boolean"
+    },
+    "synthetic": {
+      "default": false,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "pii_redacted": {
+      "default": false,
+      "title": "Pii Redacted",
+      "type": "boolean"
+    },
+    "weight_multiplier": {
+      "default": 1.0,
+      "title": "Weight Multiplier",
+      "type": "number"
+    },
+    "note": {
+      "default": "",
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "case_id",
+    "modality",
+    "source_type",
+    "source_name",
+    "credibility"
+  ],
+  "title": "EvidenceUnit",
+  "type": "object"
+}

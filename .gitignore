@@ -1,0 +1,19 @@
+# Local data and privacy-sensitive files
+data/
+models/
+cases_synthetic/SYN-*/
+outputs/evidence_units_*.jsonl
+outputs/case_results_*.jsonl
+outputs/method_predictions_*.csv
+outputs/*.log
+reports/*.log
+
+# Local artifacts
+*.zip
+*.7z
+*.tar.xz
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+deploy/.env

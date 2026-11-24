@@ -1,0 +1,141 @@
+{
+  "case_id": "C039",
+  "nodes": [
+    {
+      "id": "C039-T-G",
+      "type": "evidence",
+      "source_type": "text_model",
+      "weight": 0.7525,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C039-T-A",
+      "type": "evidence",
+      "source_type": "text_model",
+      "weight": 0.7525,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C039-F-G",
+      "type": "evidence",
+      "source_type": "face_model",
+      "weight": 0.7525,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C039-F-A",
+      "type": "evidence",
+      "source_type": "face_model",
+      "weight": 0.7375,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "H_G_male",
+      "type": "hypothesis",
+      "attr": "gender",
+      "value": "male"
+    },
+    {
+      "id": "H_G_female",
+      "type": "hypothesis",
+      "attr": "gender",
+      "value": "female"
+    },
+    {
+      "id": "H_A_18-24",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "18-24"
+    },
+    {
+      "id": "H_A_25-29",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "25-29"
+    },
+    {
+      "id": "H_A_30-34",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "30-34"
+    },
+    {
+      "id": "H_A_35-40",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "35-40"
+    },
+    {
+      "id": "T",
+      "type": "target",
+      "gender": "male",
+      "age_bucket": "25-29"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C039-T-G",
+      "target": "H_G_male",
+      "weight": 0.0478,
+      "kind": "supports"
+    },
+    {
+      "source": "C039-T-A",
+      "target": "H_A_25-29",
+      "weight": 0.1114,
+      "kind": "supports"
+    },
+    {
+      "source": "C039-F-G",
+      "target": "H_G_male",
+      "weight": 0.2796,
+      "kind": "supports"
+    },
+    {
+      "source": "C039-F-A",
+      "target": "H_A_25-29",
+      "weight": 0.0357,
+      "kind": "contradicts"
+    },
+    {
+      "source": "H_G_male",
+      "target": "T",
+      "weight": 0.9473,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_G_female",
+      "target": "T",
+      "weight": 0.0527,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_18-24",
+      "target": "T",
+      "weight": 0.2459,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_25-29",
+      "target": "T",
+      "weight": 0.3309,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_30-34",
+      "target": "T",
+      "weight": 0.2437,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_35-40",
+      "target": "T",
+      "weight": 0.1795,
+      "kind": "posterior"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1",
+  "evidence_id": "SYN-001-T-A",
+  "case_id": "SYN-001",
+  "modality": "text",
+  "source_type": "text_model",
+  "source_name": "TF-IDF char 1-3 gram + LogisticRegression",
+  "content": {
+    "model": "text_age",
+    "n_chars": 8512,
+    "snippet": "我今年24，在杭州读研"
+  },
+  "raw_ref": "minio://cases/SYN-001/text.txt",
+  "time_range": {
+    "start": "2015-01-01T00:00:00",
+    "end": "2016-05-01T00:00:00"
+  },
+  "language": "zh",
+  "gender_probs": null,
+  "age_probs": {
+    "18-24": 0.589,
+    "25-29": 0.212,
+    "30-34": 0.14,
+    "35-40": 0.059
+  },
+  "credibility": {
+    "source_reliability": 0.65,
+    "authority": 0.6,
+    "objectivity": 0.75,
+    "timeliness": 0.85,
+    "completeness": 1.0,
+    "consistency": 0.7,
+    "score": 0.751,
+    "weight": 0.751
+  },
+  "supports": [],
+  "contradicts": [],
+  "conflict_flag": false,
+  "conflict_degree": 0.0,
+  "injected": false,
+  "synthetic": true,
+  "pii_redacted": true,
+  "weight_multiplier": 1.0,
+  "note": ""
+}

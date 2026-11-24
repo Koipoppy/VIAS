@@ -1,0 +1,183 @@
+{
+  "case_id": "C040",
+  "nodes": [
+    {
+      "id": "C040-T-G",
+      "type": "evidence",
+      "source_type": "text_model",
+      "weight": 0.7525,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C040-T-A",
+      "type": "evidence",
+      "source_type": "text_model",
+      "weight": 0.7525,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C040-F-G",
+      "type": "evidence",
+      "source_type": "face_model",
+      "weight": 0.7525,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C040-F-A",
+      "type": "evidence",
+      "source_type": "face_model",
+      "weight": 0.7375,
+      "conflict": false,
+      "injected": false
+    },
+    {
+      "id": "C040-S-A",
+      "type": "evidence",
+      "source_type": "self_report",
+      "weight": 0.1731,
+      "conflict": true,
+      "injected": false
+    },
+    {
+      "id": "C040-X-G",
+      "type": "evidence",
+      "source_type": "synthetic_conflict",
+      "weight": 0.639,
+      "conflict": false,
+      "injected": true
+    },
+    {
+      "id": "C040-X-A",
+      "type": "evidence",
+      "source_type": "synthetic_conflict",
+      "weight": 0.1495,
+      "conflict": true,
+      "injected": true
+    },
+    {
+      "id": "H_G_male",
+      "type": "hypothesis",
+      "attr": "gender",
+      "value": "male"
+    },
+    {
+      "id": "H_G_female",
+      "type": "hypothesis",
+      "attr": "gender",
+      "value": "female"
+    },
+    {
+      "id": "H_A_18-24",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "18-24"
+    },
+    {
+      "id": "H_A_25-29",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "25-29"
+    },
+    {
+      "id": "H_A_30-34",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "30-34"
+    },
+    {
+      "id": "H_A_35-40",
+      "type": "hypothesis",
+      "attr": "age",
+      "value": "35-40"
+    },
+    {
+      "id": "T",
+      "type": "target",
+      "gender": "male",
+      "age_bucket": "18-24"
+    }
+  ],
+  "edges": [
+    {
+      "source": "C040-T-G",
+      "target": "H_G_male",
+      "weight": 0.0339,
+      "kind": "supports"
+    },
+    {
+      "source": "C040-T-A",
+      "target": "H_A_18-24",
+      "weight": 0.2403,
+      "kind": "contradicts"
+    },
+    {
+      "source": "C040-F-G",
+      "target": "H_G_male",
+      "weight": 0.3576,
+      "kind": "supports"
+    },
+    {
+      "source": "C040-F-A",
+      "target": "H_A_18-24",
+      "weight": 0.1944,
+      "kind": "supports"
+    },
+    {
+      "source": "C040-S-A",
+      "target": "H_A_18-24",
+      "weight": 0.0274,
+      "kind": "contradicts"
+    },
+    {
+      "source": "C040-X-G",
+      "target": "H_G_male",
+      "weight": 0.0082,
+      "kind": "contradicts"
+    },
+    {
+      "source": "C040-X-A",
+      "target": "H_A_18-24",
+      "weight": 0.0853,
+      "kind": "supports"
+    },
+    {
+      "source": "H_G_male",
+      "target": "T",
+      "weight": 0.9636,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_G_female",
+      "target": "T",
+      "weight": 0.0364,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_18-24",
+      "target": "T",
+      "weight": 0.3246,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_25-29",
+      "target": "T",
+      "weight": 0.3194,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_30-34",
+      "target": "T",
+      "weight": 0.1549,
+      "kind": "posterior"
+    },
+    {
+      "source": "H_A_35-40",
+      "target": "T",
+      "weight": 0.201,
+      "kind": "posterior"
+    }
+  ]
+}

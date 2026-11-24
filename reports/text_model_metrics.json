@@ -1,0 +1,76 @@
+{
+  "n_train": 2824,
+  "n_pilot": 50,
+  "gender_accuracy": 0.78,
+  "gender_f1_macro": 0.7726333195535345,
+  "age_accuracy": 0.36,
+  "age_f1_macro": 0.3459986772486772,
+  "gender_report": {
+    "female": {
+      "precision": 0.9375,
+      "recall": 0.6,
+      "f1-score": 0.7317073170731707,
+      "support": 25.0
+    },
+    "male": {
+      "precision": 0.7058823529411765,
+      "recall": 0.96,
+      "f1-score": 0.8135593220338984,
+      "support": 25.0
+    },
+    "accuracy": 0.78,
+    "macro avg": {
+      "precision": 0.8216911764705883,
+      "recall": 0.78,
+      "f1-score": 0.7726333195535345,
+      "support": 50.0
+    },
+    "weighted avg": {
+      "precision": 0.8216911764705883,
+      "recall": 0.78,
+      "f1-score": 0.7726333195535346,
+      "support": 50.0
+    }
+  },
+  "age_report": {
+    "18-24": {
+      "precision": 1.0,
+      "recall": 0.35,
+      "f1-score": 0.5185185185185185,
+      "support": 20.0
+    },
+    "25-29": {
+      "precision": 0.18181818181818182,
+      "recall": 0.2,
+      "f1-score": 0.19047619047619047,
+      "support": 10.0
+    },
+    "30-34": {
+      "precision": 0.2727272727272727,
+      "recall": 0.6,
+      "f1-score": 0.375,
+      "support": 10.0
+    },
+    "35-40": {
+      "precision": 0.3,
+      "recall": 0.3,
+      "f1-score": 0.3,
+      "support": 10.0
+    },
+    "accuracy": 0.36,
+    "macro avg": {
+      "precision": 0.43863636363636366,
+      "recall": 0.3625,
+      "f1-score": 0.3459986772486772,
+      "support": 50.0
+    },
+    "weighted avg": {
+      "precision": 0.5509090909090909,
+      "recall": 0.36,
+      "f1-score": 0.3805026455026455,
+      "support": 50.0
+    }
+  },
+  "self_report_gender_coverage": 0.0,
+  "self_report_age_coverage": 0.22
+}

@@ -1,0 +1,78 @@
+{
+  "n": 50,
+  "gender_accuracy": 0.96,
+  "gender_f1_macro": 0.9599358974358975,
+  "age_accuracy": 0.46,
+  "age_f1_macro": 0.2446236559139785,
+  "gender_report": {
+    "female": {
+      "precision": 1.0,
+      "recall": 0.92,
+      "f1-score": 0.9583333333333334,
+      "support": 25.0
+    },
+    "male": {
+      "precision": 0.9259259259259259,
+      "recall": 1.0,
+      "f1-score": 0.9615384615384616,
+      "support": 25.0
+    },
+    "accuracy": 0.96,
+    "macro avg": {
+      "precision": 0.962962962962963,
+      "recall": 0.96,
+      "f1-score": 0.9599358974358975,
+      "support": 50.0
+    },
+    "weighted avg": {
+      "precision": 0.962962962962963,
+      "recall": 0.96,
+      "f1-score": 0.9599358974358975,
+      "support": 50.0
+    }
+  },
+  "age_report": {
+    "18-24": {
+      "precision": 0.47619047619047616,
+      "recall": 1.0,
+      "f1-score": 0.6451612903225806,
+      "support": 20.0
+    },
+    "25-29": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 10.0
+    },
+    "30-34": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 10.0
+    },
+    "35-40": {
+      "precision": 0.375,
+      "recall": 0.3,
+      "f1-score": 0.3333333333333333,
+      "support": 10.0
+    },
+    "accuracy": 0.46,
+    "macro avg": {
+      "precision": 0.21279761904761904,
+      "recall": 0.325,
+      "f1-score": 0.2446236559139785,
+      "support": 50.0
+    },
+    "weighted avg": {
+      "precision": 0.2654761904761905,
+      "recall": 0.46,
+      "f1-score": 0.3247311827956989,
+      "support": 50.0
+    }
+  },
+  "age_raw_top_distribution": {
+    "20-29": 40,
+    "30-39": 6,
+    "10-19": 4
+  }
+}

@@ -1,0 +1,479 @@
+{
+  "verdict": "PASS_WITH_PARTIALS",
+  "note": "按 pilot 口径通过；有 4 项 PARTIAL（外部依赖/待评审）",
+  "counts": {
+    "PASS": 63,
+    "PARTIAL": 4
+  },
+  "checks": [
+    {
+      "requirement": "1. 数据可得性",
+      "check": "中文文本 行数 = 6",
+      "status": "PASS",
+      "evidence": "actual=6",
+      "note": ""
+    },
+    {
+      "requirement": "1. 数据可得性",
+      "check": "人脸图像 行数 = 15",
+      "status": "PASS",
+      "evidence": "actual=15",
+      "note": ""
+    },
+    {
+      "requirement": "1. 数据可得性",
+      "check": "多模态英文 行数 = 6",
+      "status": "PASS",
+      "evidence": "actual=6",
+      "note": ""
+    },
+    {
+      "requirement": "1. 数据可得性",
+      "check": "数据集总数 >= 27",
+      "status": "PASS",
+      "evidence": "actual=27",
+      "note": ""
+    },
+    {
+      "requirement": "1. 数据可得性",
+      "check": "每行有可达性 + 大小",
+      "status": "PASS",
+      "evidence": "missing=0",
+      "note": ""
+    },
+    {
+      "requirement": "1. 数据可得性",
+      "check": "存在可点击链接",
+      "status": "PASS",
+      "evidence": "hyperlinks=45",
+      "note": ""
+    },
+    {
+      "requirement": "1. 数据可得性",
+      "check": "示范单位脱敏样本",
+      "status": "PARTIAL",
+      "evidence": "清单已覆盖公开数据集",
+      "note": "示范单位样本可得性待确认（外部依赖）"
+    },
+    {
+      "requirement": "2. 原型边界",
+      "check": "文本预测 50 条",
+      "status": "PASS",
+      "evidence": "rows=50",
+      "note": ""
+    },
+    {
+      "requirement": "2. 原型边界",
+      "check": "人脸预测 50 条",
+      "status": "PASS",
+      "evidence": "rows=50",
+      "note": ""
+    },
+    {
+      "requirement": "2. 原型边界",
+      "check": "证据包含 text + image",
+      "status": "PASS",
+      "evidence": "modalities=['image', 'text']",
+      "note": ""
+    },
+    {
+      "requirement": "2. 原型边界",
+      "check": "音频/行为预留接口",
+      "status": "PASS",
+      "evidence": "audio/behavior stubs return reserved EvidenceUnit",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "设计说明包含「标签体系」",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "设计说明包含「六维可信度」",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "设计说明包含「层次结构」",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "设计说明包含「融合」",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "设计说明包含「冲突」",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "设计说明包含「可解释」",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "Schema 评审稿存在",
+      "status": "PASS",
+      "evidence": "D:\\Products\\L1918实习工作\\VIAS\\vias_pilot\\reports\\evidence_unit_v0.1_review.md",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "评审稿含字段表",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "评审稿含待评审问题",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "README 含 10 月计划补齐",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "字段 schema_version",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "字段 raw_ref",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "字段 time_range",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "字段 language",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "字段 synthetic",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "字段 pii_redacted",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "必填字段",
+      "status": "PASS",
+      "evidence": "[]",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "modality 含 audio/behavior",
+      "status": "PASS",
+      "evidence": "typing.Literal['text', 'image', 'audio', 'behavior', 'metadata']",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "JSON Schema 可解析",
+      "status": "PASS",
+      "evidence": "properties=22",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "示例通过 Pydantic 校验",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "输出证据全部可校验",
+      "status": "PASS",
+      "evidence": "validated=442, bad=0",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "定型/冻结",
+      "status": "PARTIAL",
+      "evidence": "v0.1 已可运行",
+      "note": "尚未团队评审/字段冻结"
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "requirements.txt",
+      "status": "PASS",
+      "evidence": "D:\\Products\\L1918实习工作\\VIAS\\vias_pilot\\requirements.txt",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 numpy",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 pandas",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 sklearn",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 joblib",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 pydantic",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 matplotlib",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 networkx",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 torch",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 transformers",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "依赖 PIL",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "文本模型文件",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "端到端",
+      "check": "端到端 pipeline 运行",
+      "status": "PASS",
+      "evidence": "exit=0",
+      "note": "5\"\n    ],\n    \"injected_recovery_rate\": 0.4\n  },\n  \"coverage\": {\n    \"n_cases\": 50,\n    \"self_report_gender\": 0.0,\n    \"self_report_age\": 0.22,\n    \"text_gender_evidence\": 1.0,\n    \"text_age_evidence\": 1.0,\n    \"face_gender_evidence\": 1.0,\n    \"face_age_evidence\": 1.0\n  }\n}\nsaved outputs to outputs\n"
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "pipeline 指标可用",
+      "status": "PASS",
+      "evidence": "gender=0.96, age=0.5",
+      "note": ""
+    },
+    {
+      "requirement": "端到端",
+      "check": "audio/behavior 接口自检",
+      "status": "PASS",
+      "evidence": "exit=0",
+      "note": "audio stub: SYN-001-A-STUB audio reserved 0.37\nbehavior stub: SYN-001-B-STUB behavior reserved 0.37\nstubs OK\n"
+    },
+    {
+      "requirement": "端到端",
+      "check": "30 例案件包重建",
+      "status": "PASS",
+      "evidence": "exit=0",
+      "note": "cases: 30 injected: 10\ngender correct: 26 / 30\nage correct: 16 / 30\noutput: cases_synthetic\n"
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "docker-compose 三服务",
+      "status": "PASS",
+      "evidence": "services=['postgres', 'minio', 'redis']",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "initdb SQL",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "6. 开发环境",
+      "check": "项目级容器实际启动",
+      "status": "PARTIAL",
+      "evidence": "本机未安装 Docker",
+      "note": "compose 已做 YAML 校验，未实际启动容器"
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "30 行",
+      "status": "PASS",
+      "evidence": "rows=30",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "20 干净 + 10 注入",
+      "status": "PASS",
+      "evidence": "injected=10",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "30 个案件目录",
+      "status": "PASS",
+      "evidence": "dirs=30",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "每案 6 个文件齐全",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "每案证据 >=4 且可校验",
+      "status": "PASS",
+      "evidence": "bad=0",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "文本脱敏无 URL/邮箱/手机/证件",
+      "status": "PASS",
+      "evidence": "pii_files=0",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "文本长度 <= 5100",
+      "status": "PASS",
+      "evidence": "too_long=0",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "30 例均标记 synthetic",
+      "status": "PASS",
+      "evidence": "synthetic=30",
+      "note": ""
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "真实/脱敏案件",
+      "status": "PARTIAL",
+      "evidence": "当前 30 例为公开数据构造的合成样例",
+      "note": "真实案件需示范单位脱敏样本（外部依赖）"
+    },
+    {
+      "requirement": "5. 30 例样例案件",
+      "check": "案件包 README + 数据声明",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "7. 技术路线",
+      "check": "融合/冲突/可解释函数存在",
+      "status": "PASS",
+      "evidence": "weighted_fuse, conflict_handle, leave_one_out",
+      "note": ""
+    },
+    {
+      "requirement": "7. 技术路线",
+      "check": "干净集性别 0.96",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "7. 技术路线",
+      "check": "干净集年龄 0.50",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "7. 技术路线",
+      "check": "冲突检出 0.90",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "7. 技术路线",
+      "check": "干净误报 0.14",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

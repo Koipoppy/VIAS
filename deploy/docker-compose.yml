@@ -1,0 +1,70 @@
+version: "3.9"
+
+# VIAS project-level dev stack: PostgreSQL 14 + MinIO + Redis.
+# The pilot itself runs as a local Python process; this stack is for the
+# project-level environment described in the implementation plan.
+services:
+  postgres:
+    image: postgres:14
+    container_name: vias-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vias}
+      POSTGRES_USER: ${POSTGRES_USER:-vias}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vias_dev_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vias} -d ${POSTGRES_DB:-vias}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vias-net
+
+  minio:
+    image: minio/minio:latest
+    container_name: vias-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-vias}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-vias_dev_password}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vias-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: vias-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vias-net
+
+volumes:
+  pgdata:
+  miniodata:
+  redisdata:
+
+networks:
+  vias-net:
+    driver: bridge
