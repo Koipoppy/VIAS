@@ -8,7 +8,7 @@
 
 ## 先看这四份
 
-1. **一页纸**：[`reports/executive_summary.md`](reports/executive_summary.md) — 给程尧的 1 页总结
+1. **一页纸**：[`reports/executive_summary.md`](reports/executive_summary.md) — 给项目负责人的 1 页总结
 2. **完整报告**：[`reports/pilot_report.md`](reports/pilot_report.md) — 数据、方法、结果、案例、局限、下一步
 3. **设计说明**：[`reports/pilot_design_note.md`](reports/pilot_design_note.md) — 证据单元 Schema、六维可信度、融合/冲突公式
 4. **Schema 评审稿**：[`reports/evidence_unit_v0.1_review.md`](reports/evidence_unit_v0.1_review.md) — 字段表、必填/枚举、待评审问题
@@ -23,7 +23,7 @@
 - `cases_synthetic/SYN-*/` 下的 `text.txt`、`face.jpg`、`evidence_units.jsonl`、`result.json`（案件数据）
 - `models/`（文本模型）
 - `outputs/evidence_units_*.jsonl`、`outputs/case_results_*.jsonl`、`outputs/method_predictions_*.csv`（含文本片段/逐案结果）
-- `*.zip`、`papers_pilot/`、`程尧给的资料/`
+- `*.zip`、`papers_pilot/`、本地项目资料 PDF/
 
 仓库保留：`cases_synthetic/README.md`、`DATA_NOTICE.md`、`manifest.csv`，以及代码、报告、图表、测试和环境配置。
 
