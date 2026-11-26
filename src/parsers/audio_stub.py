@@ -39,7 +39,7 @@ def parse_audio(
 ) -> EvidenceUnit:
     eid = evidence_id or f"{case_id}-A-STUB"
     return EvidenceUnit(
-        schema_version="0.1",
+        schema_version="1.0",
         evidence_id=eid,
         case_id=case_id,
         modality="audio",

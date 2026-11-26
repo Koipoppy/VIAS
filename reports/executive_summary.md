@@ -37,8 +37,8 @@
 |---|---|
 | 需求调研 / 公开数据可得性 | ✅ 公开数据；示范单位脱敏样本待确认 |
 | 原型边界（文本、图像先行） | ✅ text+image；audio/behavior 预留 stub |
-| 技术方案 / 数据规范 | ✅ pilot 版 + Schema 评审稿 |
-| 统一证据单元 Schema | ✅ v0.1 + JSON Schema + 示例 |
+| 技术方案 / 数据规范 | ✅ v1.0 定稿（`technical_scheme_and_data_spec_v1.0.md`） |
+| 统一证据单元 Schema | ✅ v1.0 冻结（项目内）；22 字段 + JSON Schema + 示例 |
 | 30 例样例案件 | ⚠️ 30 个**合成**案件包（20 干净 + 10 注入），不是真实案件 |
 | 开发环境 | ✅ pilot Python 环境；`deploy/` 提供项目级 compose |
 
@@ -46,13 +46,15 @@
 
 - 报告：`reports/pilot_report.md`
 - 设计说明：`reports/pilot_design_note.md`
-- Schema 评审稿：`reports/evidence_unit_v0.1_review.md`
+- 技术方案与数据规范：`reports/technical_scheme_and_data_spec_v1.0.md`
+- v0.1 历史评审稿：`reports/evidence_unit_v0.1_review.md`
+- Schema v1.0：`schema/evidence_unit.schema.json`、`schema/evidence_unit.example.json`
 - 指标：`outputs/metrics.json`
 - 逐案结果：`outputs/case_results_clean.jsonl`、`outputs/case_results_injected.jsonl`
 - 证据单元：`outputs/evidence_units_clean.jsonl`、`outputs/evidence_units_injected.jsonl`
 - 图表：`outputs/figures/`
 - 30 例合成案件包：`cases_synthetic/`（20 干净 + 10 注入）
-- Schema：`schema/evidence_unit.schema.json`、`schema/evidence_unit.example.json`
+- Schema：`schema/evidence_unit.schema.json`、`schema/evidence_unit.example.json`（v1.0）
 - 预留接口：`src/parsers/audio_stub.py`、`src/parsers/behavior_stub.py`
 - 项目级环境：`deploy/docker-compose.yml` + `deploy/README.md`
 - 代码：`src/`（schema、credibility、fusion、pipeline、text_model、face_model、make_figures、build_case_packages）

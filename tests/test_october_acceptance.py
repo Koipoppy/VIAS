@@ -110,15 +110,24 @@ def check_boundary():
 
 def check_docs():
     design = ROOT / "reports/pilot_design_note.md"
+    spec = ROOT / "reports/technical_scheme_and_data_spec_v1.0.md"
     review = ROOT / "reports/evidence_unit_v0.1_review.md"
     readme = ROOT / "README.md"
     dtext = design.read_text(encoding="utf-8") if design.exists() else ""
     for key in ["标签体系", "六维可信度", "层次结构", "融合", "冲突", "可解释"]:
         add("3. 技术方案/数据规范", f"设计说明包含「{key}」", "PASS" if key in dtext else "FAIL")
+    stext = spec.read_text(encoding="utf-8") if spec.exists() else ""
+    add("3. 技术方案/数据规范", "技术方案与数据规范 v1.0 文档存在",
+        "PASS" if spec.exists() else "FAIL", str(spec))
+    add("3. 技术方案/数据规范", "规范含 22 字段表",
+        "PASS" if "字段表（22" in stext or "22 个字段" in stext else "FAIL")
+    add("3. 技术方案/数据规范", "规范含数据治理与版本规则",
+        "PASS" if "数据规范" in stext and "版本与变更" in stext else "FAIL")
+    add("3. 技术方案/数据规范", "Schema v1.0 标注冻结",
+        "PASS" if "冻结" in stext and "1.0" in stext else "FAIL")
     rtext = review.read_text(encoding="utf-8") if review.exists() else ""
-    add("3. 技术方案/数据规范", "Schema 评审稿存在", "PASS" if review.exists() else "FAIL", str(review))
-    add("3. 技术方案/数据规范", "评审稿含字段表", "PASS" if "字段表" in rtext or "字段" in rtext else "FAIL")
-    add("3. 技术方案/数据规范", "评审稿含待评审问题", "PASS" if "待评审问题" in rtext else "FAIL")
+    add("3. 技术方案/数据规范", "v0.1 历史评审稿存在", "PASS" if review.exists() else "FAIL", str(review))
+    add("3. 技术方案/数据规范", "历史评审稿含待评审问题", "PASS" if "待评审问题" in rtext else "FAIL")
     add("3. 技术方案/数据规范", "README 含 10 月计划补齐", "PASS" if "10 月计划补齐情况" in readme.read_text(encoding="utf-8") else "FAIL")
 
 
@@ -132,11 +141,18 @@ def check_schema():
     mod_ann = str(EU.model_fields["modality"].annotation)
     add("4. 统一证据单元 Schema", "modality 含 audio/behavior",
         "PASS" if "audio" in mod_ann and "behavior" in mod_ann else "FAIL", mod_ann)
+    add("4. 统一证据单元 Schema", "默认版本 v1.0",
+        "PASS" if str(EU.model_fields["schema_version"].default) == "1.0" else "FAIL",
+        str(EU.model_fields["schema_version"].default))
     schema_path = ROOT / "schema/evidence_unit.schema.json"
     example_path = ROOT / "schema/evidence_unit.example.json"
     try:
         sch = json.load(open(schema_path, encoding="utf-8"))
         add("4. 统一证据单元 Schema", "JSON Schema 可解析", "PASS", f"properties={len(sch['properties'])}")
+        add("4. 统一证据单元 Schema", "JSON Schema 禁止额外字段",
+            "PASS" if sch.get("additionalProperties") is False else "FAIL")
+        add("4. 统一证据单元 Schema", "source_type 枚举",
+            "PASS" if "synthetic_conflict" in sch["properties"]["source_type"].get("enum", []) else "FAIL")
     except Exception as e:
         add("4. 统一证据单元 Schema", "JSON Schema 可解析", "FAIL", str(e))
     try:
@@ -156,8 +172,8 @@ def check_schema():
                 bad += 1
     add("4. 统一证据单元 Schema", "输出证据全部可校验", "PASS" if bad == 0 else "FAIL",
         f"validated={total}, bad={bad}")
-    add("4. 统一证据单元 Schema", "定型/冻结", "PARTIAL", "v0.1 已可运行",
-        "尚未团队评审/字段冻结")
+    add("4. 统一证据单元 Schema", "定型/冻结", "PASS", "v1.0 项目内冻结",
+        "团队评审待确认")
 
 
 def check_cases():
@@ -288,7 +304,7 @@ def write_reports():
     lines = [
         "# 10 月计划验收报告",
         "",
-        "**日期**：2026-11-24  ",
+        "**日期**：2026-11-25  ",
         "**标准**：需求调研与数据可得性摸底；原型边界（文本、图像先行，音频/行为预留）；技术方案与数据规范；统一证据单元 Schema；30 例样例案件；开发环境；技术路线。",
         "",
         f"## 总判定：**{verdict}**",
@@ -334,7 +350,7 @@ def write_reports():
         "",
         "1. **30 例真实/脱敏案件**：需示范单位提供样本并走审批；当前是合成占位。",
         "2. **项目级容器实际启动**：本机未安装 Docker；compose 文件已做 YAML 校验。",
-        "3. **Schema 定型/冻结**：v0.1 可运行，但未团队评审。",
+        "3. **Schema 定型/冻结**：v1.0 已项目内冻结；团队评审待确认。",
         "4. **音频/行为模型**：只有预留接口，没有 ASR/声纹/行为序列模型。",
         "",
         "## 复现",

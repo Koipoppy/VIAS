@@ -1,17 +1,18 @@
 # Pilot 交付说明
 
-**日期**：2026-11-24  
-**状态**：可运行、可复现的 pilot v0.1  
+**日期**：2026-11-25  
+**状态**：可运行、可复现的 pilot v1.0；统一证据单元 Schema v1.0（项目内冻结）  
 **范围**：文本 + 人脸，性别 / 年龄段代理目标，50 个合成多模态样本
 
 ---
 
-## 先看这四份
+## 先看这几份
 
 1. **一页纸**：[`reports/executive_summary.md`](reports/executive_summary.md) — 给项目负责人的 1 页总结
 2. **完整报告**：[`reports/pilot_report.md`](reports/pilot_report.md) — 数据、方法、结果、案例、局限、下一步
 3. **设计说明**：[`reports/pilot_design_note.md`](reports/pilot_design_note.md) — 证据单元 Schema、六维可信度、融合/冲突公式
-4. **Schema 评审稿**：[`reports/evidence_unit_v0.1_review.md`](reports/evidence_unit_v0.1_review.md) — 字段表、必填/枚举、待评审问题
+4. **技术方案与数据规范 v1.0**：[`reports/technical_scheme_and_data_spec_v1.0.md`](reports/technical_scheme_and_data_spec_v1.0.md) — 22 字段表、枚举、约束、数据治理、版本规则
+5. **Schema v0.1 历史评审稿**：[`reports/evidence_unit_v0.1_review.md`](reports/evidence_unit_v0.1_review.md) — 供对照
 
 ---
 
@@ -50,8 +51,8 @@
 |---|---|---|
 | 需求调研 / 公开数据可得性 | ✅ 公开数据 | 27 个数据集清单+可达性；示范单位脱敏样本待确认 |
 | 原型边界（文本、图像先行） | ✅ | text+image 已实现；audio/behavior 预留 stub |
-| 技术方案 / 数据规范 | ✅ pilot 版 | `pilot_design_note.md` + `evidence_unit_v0.1_review.md` |
-| 统一证据单元 Schema | ✅ v0.1 | `src/schema.py` + `schema/evidence_unit.schema.json` + 示例 |
+| 技术方案 / 数据规范 | ✅ v1.0 定稿 | `technical_scheme_and_data_spec_v1.0.md` |
+| 统一证据单元 Schema | ✅ v1.0 冻结（项目内） | `src/schema.py` + `schema/evidence_unit.schema.json` + 示例 |
 | 30 例样例案件 | ⚠️ 合成案件包 | `cases_synthetic/` 30 例（20 干净 + 10 注入），**不是真实案件** |
 | 开发环境 | ✅ pilot + compose | Python 环境已跑通；`deploy/` 提供 PG14+MinIO+Redis |
 
@@ -61,7 +62,10 @@
 
 | 路径 | 内容 |
 |---|---|
-| `src/schema.py` | 证据单元 Pydantic 模型 |
+| `src/schema.py` | 证据单元 Pydantic 模型（v1.0） |
+| `src/export_schema.py` | 从模型导出 JSON Schema |
+| `src/migrate_schema_v1.py` | v0.1 → v1.0 迁移 |
+| `tests/test_schema_v1.py` | Schema v1.0 约束测试 |
 | `src/credibility.py` | 六维可信度规则 |
 | `src/fusion.py` | 加权融合 + 置信度加权 D-S 冲突 |
 | `src/pipeline.py` | 端到端流水线（证据→融合→冲突→可解释→指标） |
@@ -74,8 +78,8 @@
 | `src/parsers/` | audio/behavior 预留接口（stub） |
 | `src/check_stubs.py` | 预留接口自检 |
 | `src/build_case_packages.py` | 30 例合成案件打包 |
-| `schema/evidence_unit.schema.json` | JSON Schema v0.1 |
-| `schema/evidence_unit.example.json` | 证据单元示例 |
+| `schema/evidence_unit.schema.json` | JSON Schema v1.0 |
+| `schema/evidence_unit.example.json` | 证据单元示例（v1.0） |
 | `cases_synthetic/` | 30 例合成案件包（20 干净 + 10 注入） |
 | `deploy/` | PostgreSQL 14 + MinIO + Redis compose |
 | `data/processed/` | 训练/ pilot CSV、文本/人脸预测、自述抽取 |
@@ -87,7 +91,8 @@
 | `outputs/figures/*.png` | 8 张图表 |
 | `reports/text_model_metrics.json` | 文本模型指标 |
 | `reports/face_model_metrics.json` | 人脸模型指标 |
-| `reports/evidence_unit_v0.1_review.md` | Schema v0.1 一页评审稿 |
+| `reports/technical_scheme_and_data_spec_v1.0.md` | 技术方案与数据规范 v1.0（22 字段、约束、版本规则） |
+| `reports/evidence_unit_v0.1_review.md` | Schema v0.1 历史评审稿 |
 
 ---
 

@@ -1,9 +1,9 @@
 {
   "verdict": "PASS_WITH_PARTIALS",
-  "note": "按 pilot 口径通过；有 4 项 PARTIAL（外部依赖/待评审）",
+  "note": "按 pilot 口径通过；有 3 项 PARTIAL（外部依赖/待评审）",
   "counts": {
-    "PASS": 63,
-    "PARTIAL": 4
+    "PASS": 70,
+    "PARTIAL": 3
   },
   "checks": [
     {
@@ -127,21 +127,42 @@
     },
     {
       "requirement": "3. 技术方案/数据规范",
-      "check": "Schema 评审稿存在",
+      "check": "技术方案与数据规范 v1.0 文档存在",
       "status": "PASS",
-      "evidence": "D:\\Products\\L1918实习工作\\VIAS\\vias_pilot\\reports\\evidence_unit_v0.1_review.md",
+      "evidence": "D:\\Products\\L1918实习工作\\VIAS\\vias_pilot\\reports\\technical_scheme_and_data_spec_v1.0.md",
       "note": ""
     },
     {
       "requirement": "3. 技术方案/数据规范",
-      "check": "评审稿含字段表",
+      "check": "规范含 22 字段表",
       "status": "PASS",
       "evidence": "",
       "note": ""
     },
     {
       "requirement": "3. 技术方案/数据规范",
-      "check": "评审稿含待评审问题",
+      "check": "规范含数据治理与版本规则",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "Schema v1.0 标注冻结",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "v0.1 历史评审稿存在",
+      "status": "PASS",
+      "evidence": "D:\\Products\\L1918实习工作\\VIAS\\vias_pilot\\reports\\evidence_unit_v0.1_review.md",
+      "note": ""
+    },
+    {
+      "requirement": "3. 技术方案/数据规范",
+      "check": "历史评审稿含待评审问题",
       "status": "PASS",
       "evidence": "",
       "note": ""
@@ -211,9 +232,30 @@
     },
     {
       "requirement": "4. 统一证据单元 Schema",
+      "check": "默认版本 v1.0",
+      "status": "PASS",
+      "evidence": "1.0",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
       "check": "JSON Schema 可解析",
       "status": "PASS",
       "evidence": "properties=22",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "JSON Schema 禁止额外字段",
+      "status": "PASS",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "requirement": "4. 统一证据单元 Schema",
+      "check": "source_type 枚举",
+      "status": "PASS",
+      "evidence": "",
       "note": ""
     },
     {
@@ -233,9 +275,9 @@
     {
       "requirement": "4. 统一证据单元 Schema",
       "check": "定型/冻结",
-      "status": "PARTIAL",
-      "evidence": "v0.1 已可运行",
-      "note": "尚未团队评审/字段冻结"
+      "status": "PASS",
+      "evidence": "v1.0 项目内冻结",
+      "note": "团队评审待确认"
     },
     {
       "requirement": "6. 开发环境",

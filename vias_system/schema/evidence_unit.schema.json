@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Koipoppy/VIAS/vias_system/schema/evidence_unit.schema.json",
+  "title": "EvidenceUnit",
+  "description": "One modality-specific evidence card, shared by all pipeline stages.",
+  "$defs": {
+    "Credibility": {
+      "additionalProperties": false,
+      "description": "Six-dimension credibility used by the project's technical route.",
+      "properties": {
+        "source_reliability": {
+          "description": "来源可靠度，0–1",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Source Reliability",
+          "type": "number"
+        },
+        "authority": {
+          "description": "权威性，0–1",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Authority",
+          "type": "number"
+        },
+        "objectivity": {
+          "description": "客观性，0–1",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Objectivity",
+          "type": "number"
+        },
+        "timeliness": {
+          "description": "时效性，0–1",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Timeliness",
+          "type": "number"
+        },
+        "completeness": {
+          "description": "完整性，0–1",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Completeness",
+          "type": "number"
+        },
+        "consistency": {
+          "description": "一致性，0–1；冲突后更新",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Consistency",
+          "type": "number"
+        },
+        "score": {
+          "description": "六维加权综合分，0–1",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "weight": {
+          "description": "有效权重基数，默认等于 score",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "source_reliability",
+        "authority",
+        "objectivity",
+        "timeliness",
+        "completeness",
+        "consistency",
+        "score",
+        "weight"
+      ],
+      "title": "Credibility",
+      "type": "object"
+    },
+    "TimeRange": {
+      "additionalProperties": false,
+      "description": "Optional event-time interval; ISO-8601 strings.",
+      "properties": {
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 起始时间",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 结束时间",
+          "title": "End"
+        }
+      },
+      "title": "TimeRange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.1",
+      "description": "Schema 版本；新输出固定 1.1，1.0/0.1 仅兼容旧数据",
+      "enum": [
+        "0.1",
+        "1.0",
+        "1.1"
+      ],
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "evidence_id": {
+      "description": "案件内唯一 ID，建议 <case_id>-<MOD>-<ATTR>",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "case_id": {
+      "description": "案件 ID；合成案件以 SYN- 开头",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "modality": {
+      "description": "证据模态",
+      "enum": [
+        "text",
+        "image",
+        "audio",
+        "behavior",
+        "metadata"
+      ],
+      "title": "Modality",
+      "type": "string"
+    },
+    "source_type": {
+      "description": "来源类型；audio/behavior 当前为预留 stub",
+      "enum": [
+        "text_model",
+        "face_model",
+        "self_report",
+        "audio_stub",
+        "behavior_stub",
+        "synthetic_conflict",
+        "metadata"
+      ],
+      "title": "Source Type",
+      "type": "string"
+    },
+    "source_name": {
+      "description": "具体模型、规则或设备名称",
+      "minLength": 1,
+      "title": "Source Name",
+      "type": "string"
+    },
+    "content": {
+      "additionalProperties": true,
+      "description": "模态相关内容；v1.0 按 modality 约定必填键，见数据规范",
+      "title": "Content",
+      "type": "object"
+    },
+    "raw_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "原始文件引用（MinIO/本地路径）",
+      "title": "Raw Ref"
+    },
+    "time_range": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimeRange"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "事件时间范围"
+    },
+    "language": {
+      "anyOf": [
+        {
+          "maxLength": 16,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "BCP-47 语言标签，如 zh",
+      "title": "Language"
+    },
+    "gender_probs": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "性别概率；键必须为 male/female，和为 1",
+      "title": "Gender Probs"
+    },
+    "age_probs": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "年龄段概率；键必须为四个目标段，和为 1",
+      "title": "Age Probs"
+    },
+    "identity_probs": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "候选身份概率；键为 candidate_id，值为 0–1，和为 1；对应目标身份层",
+      "title": "Identity Probs"
+    },
+    "credibility": {
+      "$ref": "#/$defs/Credibility",
+      "description": "六维可信度"
+    },
+    "supports": {
+      "description": "支持的假设 ID",
+      "items": {
+        "type": "string"
+      },
+      "title": "Supports",
+      "type": "array"
+    },
+    "contradicts": {
+      "description": "反对的假设 ID",
+      "items": {
+        "type": "string"
+      },
+      "title": "Contradicts",
+      "type": "array"
+    },
+    "conflict_flag": {
+      "default": false,
+      "description": "是否被冲突处理标记",
+      "title": "Conflict Flag",
+      "type": "boolean"
+    },
+    "conflict_degree": {
+      "default": 0.0,
+      "description": "最大冲突度，0–1",
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Conflict Degree",
+      "type": "number"
+    },
+    "injected": {
+      "default": false,
+      "description": "是否人工注入的矛盾证据",
+      "title": "Injected",
+      "type": "boolean"
+    },
+    "synthetic": {
+      "default": false,
+      "description": "是否合成案件/合成配对",
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "pii_redacted": {
+      "default": false,
+      "description": "文本是否已脱敏",
+      "title": "Pii Redacted",
+      "type": "boolean"
+    },
+    "weight_multiplier": {
+      "default": 1.0,
+      "description": "冲突降权系数，0–1",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "title": "Weight Multiplier",
+      "type": "number"
+    },
+    "note": {
+      "default": "",
+      "description": "处理说明",
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "case_id",
+    "modality",
+    "source_type",
+    "source_name",
+    "credibility"
+  ],
+  "type": "object"
+}

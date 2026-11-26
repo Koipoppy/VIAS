@@ -1,4 +1,6 @@
-# 统一证据单元 Schema v0.1 — 评审稿
+# 统一证据单元 Schema v0.1 — 历史评审稿
+
+> **状态更新（2026-11-25）**：本文件是 v0.1 历史评审稿；v1.0 已项目内冻结，字段约束、枚举、概率和与版本规则见 [`technical_scheme_and_data_spec_v1.0.md`](technical_scheme_and_data_spec_v1.0.md)。
 
 **日期**：2026-11-24  
 **状态**：待评审（pilot 已按此实现）  

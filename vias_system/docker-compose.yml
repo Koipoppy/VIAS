@@ -1,0 +1,18 @@
+services:
+  vias-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      VIAS_DB_PATH: /data/vias.db
+      VIAS_STORAGE_DIR: /data/uploads
+      VIAS_TEXT_MODEL_DIR: /app/models
+      VIAS_ENABLE_FACE_MODEL: "0"
+      VIAS_MAX_UPLOAD_MB: "25"
+      # VIAS_API_KEY: change-me
+    volumes:
+      - vias_data:/data
+    restart: unless-stopped
+
+volumes:
+  vias_data:

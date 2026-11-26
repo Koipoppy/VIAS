@@ -264,7 +264,7 @@ def main():
             ev = ev_map[cid]
             true_g, true_b = row["gender"], row["age_bucket"]
             for e in ev:
-                dump.append({**e.model_dump(), "effective_weight": round(e.effective_weight(), 4)})
+                dump.append(e.model_dump())
 
             # baselines
             text_g = text[text["uid"] == row["uid"]].iloc[0]["pred_gender"]

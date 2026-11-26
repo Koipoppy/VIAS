@@ -37,7 +37,7 @@ def parse_behavior(
 ) -> EvidenceUnit:
     eid = evidence_id or f"{case_id}-B-STUB"
     return EvidenceUnit(
-        schema_version="0.1",
+        schema_version="1.0",
         evidence_id=eid,
         case_id=case_id,
         modality="behavior",

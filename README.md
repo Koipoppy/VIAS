@@ -1,4 +1,6 @@
-# VIAS Pilot — 虚实融合身份推断（性别/年龄代理目标）
+# VIAS — 虚实融合身份推断
+
+> **仓库内容**：`vias_pilot/` 是 pilot 归档；`vias_system/` 是完全体 FastAPI 服务（证据接入、可信度、贝叶斯、冲突、解释、候选身份层）。
 
 小规模、端到端的可行性验证：把 SMP 2016 中文文本与 AFAD-Lite 亚洲人脸配对成 50 个多模态样本，按项目技术路线跑通：
 
@@ -9,6 +11,15 @@
 > **这是 pilot，不是生产系统。** 文本用户与人脸是同年龄、同性别的**配对**，不是同一个真实人；目标变量是性别/年龄段，不是真实身份。
 
 > **仓库范围**：只包含代码、Schema、报告、测试、图表、环境配置。原始数据、30 例案件包中的 `text`/`face`/`evidence`/`result` 文件、模型和证据 JSONL 因隐私、许可和体积原因**不推送**；完整本地包见 [`DELIVERY.md`](DELIVERY.md)。
+
+## PAN 2018 全量多模态评估（2026-11-26）
+
+在 PAN 2018 Author Profiling 官方训练/测试集全量（EN/ES/AR，7,500 训练 / 5,100 测试用户）上评估文本、图像、融合与冲突处理：
+
+- 报告：[`reports/PAN2018_Multimodal_Gender_Report_2026-11-26.pdf`](reports/PAN2018_Multimodal_Gender_Report_2026-11-26.pdf)
+- 复现脚本：`src/pan18_prepare.py`、`src/pan18_text_model.py`、`src/pan18_text_predict.py`、`src/pan18_image_model.py`、`src/pan18_fusion_eval.py`
+- 数据不进入公共仓库；原始 zip/处理中间件在 `data/` 下。
+- 关键结果：文本 0.792、图像 0.573、堆叠融合 0.795；图像是弱信号，等权/可信度融合反而降到 0.710。
 
 ## 结果速览
 
@@ -30,8 +41,8 @@
 |---|---|
 | 需求调研 / 公开数据可得性 | ✅ 公开数据集已摸底/核验；示范单位脱敏样本待确认 |
 | 原型边界（文本、图像先行） | ✅ text+image 已实现；audio/behavior 预留 stub |
-| 技术方案 / 数据规范 | ✅ pilot 版 + Schema 评审稿 |
-| 统一证据单元 Schema | ✅ v0.1 + JSON Schema + 示例 |
+| 技术方案 / 数据规范 | ✅ v1.0 定稿 | `reports/technical_scheme_and_data_spec_v1.0.md` |
+| 统一证据单元 Schema | ✅ v1.0 冻结（项目内） | `src/schema.py` + JSON Schema + 示例 |
 | 30 例样例案件 | ⚠️ **30 个合成案件包**（20 干净 + 10 注入），不是真实案件 |
 | 开发环境 | ✅ pilot Python 环境；`deploy/` 提供项目级 compose |
 
@@ -39,8 +50,9 @@
 
 - [`cases_synthetic/`](cases_synthetic/) — 30 个合成案件包（`case.json`、`text.txt`、`face.jpg`、`evidence_units.jsonl`、`result.json`、`case_card.md`），含 20 干净 + 10 注入冲突；**明确标注 synthetic，不是真实案件**。
 - [`src/parsers/`](src/parsers/) — audio/behavior 预留接口（`audio_stub.py`、`behavior_stub.py`），自检 `src/check_stubs.py`。
-- [`schema/`](schema/) — `evidence_unit.schema.json`、`evidence_unit.example.json`。
-- [`reports/evidence_unit_v0.1_review.md`](reports/evidence_unit_v0.1_review.md) — Schema 一页评审稿。
+- [`schema/`](schema/) — `evidence_unit.schema.json`、`evidence_unit.example.json`（Schema v1.0）。
+- [`reports/technical_scheme_and_data_spec_v1.0.md`](reports/technical_scheme_and_data_spec_v1.0.md) — 技术方案与数据规范 v1.0（含 22 字段表、枚举、约束、版本规则）。
+- [`reports/evidence_unit_v0.1_review.md`](reports/evidence_unit_v0.1_review.md) — v0.1 历史评审稿。
 - [`deploy/`](deploy/) — PostgreSQL 14 + MinIO + Redis 的 Docker Compose、初始化 SQL、环境说明。
 
 ## 快速开始
@@ -132,7 +144,7 @@ vias_pilot/
 │   └── processed/                # 训练/ pilot CSV
 ├── models/                       # 文本模型（joblib）
 ├── outputs/                      # 证据单元、结果、指标、图
-└── reports/                      # 报告 + 设计说明 + Schema 评审稿
+└── reports/                      # 报告 + 技术方案/数据规范 + 设计说明
 ```
 
 ## 关键限制

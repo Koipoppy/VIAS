@@ -1,5 +1,7 @@
 # VIAS 虚实融合身份推断 Pilot Study 报告
 
+> **状态更新（2026-11-25）**：本文保留 2026-11-24 的 pilot 长报告叙述；Schema 已升级并冻结为 v1.0，字段约束与数据规范以 [`technical_scheme_and_data_spec_v1.0.md`](technical_scheme_and_data_spec_v1.0.md) 为准。
+
 **版本**：v0.1  
 **日期**：2026-11-24  
 **目标变量**：性别、年龄段（代理目标）  

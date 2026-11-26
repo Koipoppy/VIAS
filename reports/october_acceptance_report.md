@@ -1,12 +1,12 @@
 # 10 月计划验收报告
 
-**日期**：2026-11-24  
+**日期**：2026-11-25  
 **标准**：需求调研与数据可得性摸底；原型边界（文本、图像先行，音频/行为预留）；技术方案与数据规范；统一证据单元 Schema；30 例样例案件；开发环境；技术路线。
 
 ## 总判定：**PASS_WITH_PARTIALS**
 
-- 按 pilot 口径通过；有 4 项 PARTIAL（外部依赖/待评审）
-- 检查项：{'PASS': 63, 'PARTIAL': 4}
+- 按 pilot 口径通过；有 3 项 PARTIAL（外部依赖/待评审）
+- 检查项：{'PASS': 70, 'PARTIAL': 3}
 
 ## 测试矩阵
 
@@ -29,9 +29,12 @@
 | 3. 技术方案/数据规范 | 设计说明包含「融合」 | PASS |  |
 | 3. 技术方案/数据规范 | 设计说明包含「冲突」 | PASS |  |
 | 3. 技术方案/数据规范 | 设计说明包含「可解释」 | PASS |  |
-| 3. 技术方案/数据规范 | Schema 评审稿存在 | PASS | D:\Products\L1918实习工作\VIAS\vias_pilot\reports\evidence_unit_v0.1_review.md |
-| 3. 技术方案/数据规范 | 评审稿含字段表 | PASS |  |
-| 3. 技术方案/数据规范 | 评审稿含待评审问题 | PASS |  |
+| 3. 技术方案/数据规范 | 技术方案与数据规范 v1.0 文档存在 | PASS | D:\Products\L1918实习工作\VIAS\vias_pilot\reports\technical_scheme_and_data_spec_v1.0.md |
+| 3. 技术方案/数据规范 | 规范含 22 字段表 | PASS |  |
+| 3. 技术方案/数据规范 | 规范含数据治理与版本规则 | PASS |  |
+| 3. 技术方案/数据规范 | Schema v1.0 标注冻结 | PASS |  |
+| 3. 技术方案/数据规范 | v0.1 历史评审稿存在 | PASS | D:\Products\L1918实习工作\VIAS\vias_pilot\reports\evidence_unit_v0.1_review.md |
+| 3. 技术方案/数据规范 | 历史评审稿含待评审问题 | PASS |  |
 | 3. 技术方案/数据规范 | README 含 10 月计划补齐 | PASS |  |
 | 4. 统一证据单元 Schema | 字段 schema_version | PASS |  |
 | 4. 统一证据单元 Schema | 字段 raw_ref | PASS |  |
@@ -41,10 +44,13 @@
 | 4. 统一证据单元 Schema | 字段 pii_redacted | PASS |  |
 | 4. 统一证据单元 Schema | 必填字段 | PASS | [] |
 | 4. 统一证据单元 Schema | modality 含 audio/behavior | PASS | typing.Literal['text', 'image', 'audio', 'behavior', 'metadata'] |
+| 4. 统一证据单元 Schema | 默认版本 v1.0 | PASS | 1.0 |
 | 4. 统一证据单元 Schema | JSON Schema 可解析 | PASS | properties=22 |
+| 4. 统一证据单元 Schema | JSON Schema 禁止额外字段 | PASS |  |
+| 4. 统一证据单元 Schema | source_type 枚举 | PASS |  |
 | 4. 统一证据单元 Schema | 示例通过 Pydantic 校验 | PASS |  |
 | 4. 统一证据单元 Schema | 输出证据全部可校验 | PASS | validated=442, bad=0 |
-| 4. 统一证据单元 Schema | 定型/冻结 | PARTIAL | v0.1 已可运行；尚未团队评审/字段冻结 |
+| 4. 统一证据单元 Schema | 定型/冻结 | PASS | v1.0 项目内冻结；团队评审待确认 |
 | 6. 开发环境 | requirements.txt | PASS | D:\Products\L1918实习工作\VIAS\vias_pilot\requirements.txt |
 | 6. 开发环境 | 依赖 numpy | PASS |  |
 | 6. 开发环境 | 依赖 pandas | PASS |  |
@@ -122,7 +128,7 @@ output: cases_synthetic
 
 1. **30 例真实/脱敏案件**：需示范单位提供样本并走审批；当前是合成占位。
 2. **项目级容器实际启动**：本机未安装 Docker；compose 文件已做 YAML 校验。
-3. **Schema 定型/冻结**：v0.1 可运行，但未团队评审。
+3. **Schema 定型/冻结**：v1.0 已项目内冻结；团队评审待确认。
 4. **音频/行为模型**：只有预留接口，没有 ASR/声纹/行为序列模型。
 
 ## 复现

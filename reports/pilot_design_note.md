@@ -1,4 +1,6 @@
-# Pilot Design Note — 证据单元与推断 v0.1
+# Pilot Design Note — 证据单元与推断 v0.1（历史设计说明）
+
+> **状态更新（2026-11-25）**：Schema 已升级并冻结为 v1.0；字段约束、枚举、数据规范与版本规则以 [`technical_scheme_and_data_spec_v1.0.md`](technical_scheme_and_data_spec_v1.0.md) 为准。本文保留 pilot 设计背景与公式。
 
 **日期**：2026-11-24  
 **配套代码**：`src/schema.py`、`src/credibility.py`、`src/fusion.py`、`src/pipeline.py`

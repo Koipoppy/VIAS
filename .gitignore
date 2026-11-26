@@ -17,3 +17,8 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 deploy/.env
+
+# Pan18 full-run per-user predictions and previews
+outputs/pan18/fusion_predictions.csv
+reports/_preview/
+vias_system/var/
