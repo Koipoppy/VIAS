@@ -19,8 +19,11 @@ from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "docs" / "VIAS_Full_System_API_Solution.md"
-OUT = ROOT / "docs" / "VIAS_Full_System_API_Solution.docx"
+# Reports live in the single workspace archive; find it from either checkout.
+ARCHIVE = next((p / "报告归档" for p in [ROOT, *ROOT.parents] if (p / "报告归档").exists()),
+               ROOT.parent / "报告归档")
+SRC = ARCHIVE / "04_2026-11-25_系统方案" / "VIAS_Full_System_API_Solution.md"
+OUT = ARCHIVE / "04_2026-11-25_系统方案" / "VIAS_Full_System_API_Solution.docx"
 
 INK = RGBColor(0x1A, 0x1A, 0x1A)
 MUTED = RGBColor(0x5B, 0x67, 0x70)
@@ -284,6 +287,7 @@ def build():
     doc.core_properties.title = "VIAS 虚实融合身份推断系统能力 API 技术方案"
     doc.core_properties.subject = "五个能力接口的完整系统实现"
     doc.core_properties.author = ""
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     doc.save(OUT)
     print("saved:", OUT)
 

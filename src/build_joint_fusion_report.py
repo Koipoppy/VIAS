@@ -18,7 +18,8 @@ from reportlab.platypus import (HRFlowable, Image, KeepTogether, PageBreak,
                                 TableStyle)
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "reports" / "PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf"
+ARCHIVE = ROOT.parent / "报告归档"
+OUT = ARCHIVE / "06_2026-11-27_融合诊断与Concat" / "PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf"
 METRICS = ROOT / "outputs" / "pan18_joint" / "metrics.json"
 FIG_SCHEMA = ROOT / "outputs" / "pan18_joint" / "pan18_joint_schematic.png"
 FIG_METHODS = ROOT / "outputs" / "pan18_joint" / "pan18_joint_methods.png"
@@ -116,6 +117,7 @@ def table(header, rows, widths, numeric_cols=(), caption_text=None):
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     m = json.loads(METRICS.read_text(encoding="utf-8"))
     res = m["results"]
     comp = m["comparisons"]

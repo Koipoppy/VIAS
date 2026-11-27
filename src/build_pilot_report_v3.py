@@ -29,7 +29,8 @@ registerFontFamily("SimSun", normal="SimSun", bold="SimHei")
 registerFontFamily("SimHei", normal="SimHei", bold="SimHei")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, "reports", "VIAS_Pilot_Study_Report_2026-11-25.pdf")
+ARCHIVE = os.path.join(os.path.dirname(ROOT), "报告归档")
+OUT = os.path.join(ARCHIVE, "03_2026-11-25_Pilot定稿与验收", "VIAS_Pilot_Study_Report_2026-11-25.pdf")
 FIG_PIPE = os.path.join(ROOT, "outputs", "figures", "pipeline_diagram.png")
 FIG_SAMPLE = os.path.join(ROOT, "outputs", "figures", "sample_composition.png")
 FIG_METHOD = os.path.join(ROOT, "outputs", "figures", "method_comparison.png")
@@ -151,6 +152,7 @@ def on_page(canvas, doc):
 
 
 def main():
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
     global W
     doc = SimpleDocTemplate(
         OUT, pagesize=A4,
@@ -358,7 +360,7 @@ def main():
         "v0.1→v1.0 的主要变化是枚举化 source_type、增加范围/概率和校验、禁止额外字段、"
         "默认版本 1.0，并移除持久化 effective_weight。团队评审待确认。", body))
     story.append(Paragraph(
-        "完整规范：reports/technical_scheme_and_data_spec_v1.0.md；"
+        "完整规范：报告归档/03_2026-11-25_Pilot定稿与验收/technical_scheme_and_data_spec_v1.0.md；"
         "机器可读：schema/evidence_unit.schema.json。", note))
 
     doc.build(story, onFirstPage=on_page, onLaterPages=on_page)

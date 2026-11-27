@@ -99,12 +99,12 @@ python tests/test_api.py
 
 ## 文档
 
-- [完整方案说明 Markdown](docs/VIAS_Full_System_API_Solution.md)
-- [完整方案说明 DOCX](docs/VIAS_Full_System_API_Solution.docx)
-- [项目书要求对照](docs/PROJECT_REQUIREMENTS.md)
-- [架构说明](docs/ARCHITECTURE.md)
-- [质量报告](docs/QUALITY_REPORT.md)
-- [统一证据单元规范](docs/evidence_unit_spec_v1.1.md)
+- [完整方案说明 Markdown](../../报告归档/04_2026-11-25_系统方案/VIAS_Full_System_API_Solution.md)
+- [完整方案说明 DOCX](../../报告归档/04_2026-11-25_系统方案/VIAS_Full_System_API_Solution.docx)
+- [项目书要求对照](../../报告归档/04_2026-11-25_系统方案/PROJECT_REQUIREMENTS.md)
+- [架构说明](../../报告归档/04_2026-11-25_系统方案/ARCHITECTURE.md)
+- [质量报告](../../报告归档/04_2026-11-25_系统方案/QUALITY_REPORT.md)
+- [统一证据单元规范](../../报告归档/04_2026-11-25_系统方案/evidence_unit_spec_v1.1.md)
 - [JSON Schema](schema/evidence_unit.schema.json)
 
 ## 目录
@@ -120,7 +120,7 @@ vias_system/
 ├── models/           # 内置文本模型
 ├── schema/           # JSON Schema v1.1 + 示例
 ├── tests/             # 36 个单元/集成测试
-├── docs/              # 方案说明、架构、质量报告
+├── docs/              # benchmark JSON（方案/架构/质量报告已移至 ../../报告归档）
 ├── pyproject.toml     # 打包与依赖
 ├── Makefile
 ├── Dockerfile

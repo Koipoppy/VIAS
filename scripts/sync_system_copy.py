@@ -38,6 +38,15 @@ def _walk(root: Path):
         yield rel, path
 
 
+def _same_readme(src: Path, dst: Path) -> bool:
+    """README links to the archive, whose relative depth differs by checkout."""
+    src_text = src.read_text(encoding="utf-8")
+    dst_text = dst.read_text(encoding="utf-8")
+    if "../../报告归档/" not in dst_text:
+        dst_text = dst_text.replace("../报告归档/", "../../报告归档/")
+    return src_text == dst_text
+
+
 def compare() -> list[str]:
     problems = []
     src_files = {rel for rel, p in _walk(SRC) if p.is_file()}
@@ -47,7 +56,10 @@ def compare() -> list[str]:
     for rel in sorted(dst_files - src_files):
         problems.append(f"extra in runtime copy: {rel}")
     for rel in sorted(src_files & dst_files):
-        if not filecmp.cmp(SRC / rel, DST / rel, shallow=False):
+        if rel == Path("README.md"):
+            if not _same_readme(SRC / rel, DST / rel):
+                problems.append(f"differs: {rel}")
+        elif not filecmp.cmp(SRC / rel, DST / rel, shallow=False):
             problems.append(f"differs: {rel}")
     return problems
 
@@ -60,6 +72,12 @@ def sync() -> tuple[int, int]:
             target.mkdir(parents=True, exist_ok=True)
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
+        if rel == Path("README.md"):
+            text = path.read_text(encoding="utf-8").replace("../../报告归档/", "../报告归档/")
+            if not target.exists() or target.read_text(encoding="utf-8") != text:
+                target.write_text(text, encoding="utf-8")
+                copied += 1
+            continue
         if not target.exists() or not filecmp.cmp(path, target, shallow=False):
             shutil.copy2(path, target)
             copied += 1

@@ -19,7 +19,8 @@ from reportlab.platypus import (HRFlowable, Image, KeepTogether, PageBreak,
                                 TableStyle)
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "reports" / "Fusion_Strategy_Critique_2026-11-27.pdf"
+ARCHIVE = ROOT.parent / "报告归档"
+OUT = ARCHIVE / "06_2026-11-27_融合诊断与Concat" / "Fusion_Strategy_Critique_2026-11-27.pdf"
 FIG_SCHEMA = ROOT / "outputs" / "fusion_critique" / "fusion_schematic.png"
 FIG_ACC = ROOT / "outputs" / "fusion_critique" / "fusion_accuracy.png"
 METRICS = ROOT / "outputs" / "pan18" / "fusion_metrics.json"
@@ -144,6 +145,7 @@ def pct(x):
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     global W
     m = json.loads(METRICS.read_text(encoding="utf-8"))
     r = m["results"]

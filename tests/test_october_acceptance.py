@@ -27,6 +27,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 VIAS = ROOT.parent
+ARCHIVE = VIAS / "报告归档"
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
@@ -54,7 +55,7 @@ def run(cmd, name):
 
 
 def check_data_availability():
-    xlsx = VIAS / "性别年龄推断数据集清单_2026-11-16.xlsx"
+    xlsx = ARCHIVE / "01_2026-11-16_数据调研/性别年龄推断数据集清单_2026-11-16.xlsx"
     if not xlsx.exists():
         add("1. 数据可得性", "数据集清单存在", "FAIL", str(xlsx))
         return
@@ -109,9 +110,9 @@ def check_boundary():
 
 
 def check_docs():
-    design = ROOT / "reports/pilot_design_note.md"
-    spec = ROOT / "reports/technical_scheme_and_data_spec_v1.0.md"
-    review = ROOT / "reports/evidence_unit_v0.1_review.md"
+    design = ARCHIVE / "02_2026-11-24_Pilot设计/pilot_design_note.md"
+    spec = ARCHIVE / "03_2026-11-25_Pilot定稿与验收/technical_scheme_and_data_spec_v1.0.md"
+    review = ARCHIVE / "02_2026-11-24_Pilot设计/evidence_unit_v0.1_review.md"
     readme = ROOT / "README.md"
     dtext = design.read_text(encoding="utf-8") if design.exists() else ""
     for key in ["标签体系", "六维可信度", "层次结构", "融合", "冲突", "可解释"]:
@@ -359,7 +360,7 @@ def write_reports():
         "python tests/test_october_acceptance.py",
         "```",
     ]
-    (ROOT / "reports/october_acceptance_report.md").write_text("\n".join(lines), encoding="utf-8")
+    (ARCHIVE / "03_2026-11-25_Pilot定稿与验收/october_acceptance_report.md").write_text("\n".join(lines), encoding="utf-8")
     return verdict
 
 
@@ -375,7 +376,7 @@ def preflight():
         print("Missing:")
         for m in missing:
             print(" -", m)
-        print("The public GitHub repo intentionally excludes raw data/case files; see DELIVERY.md.")
+        print("The public GitHub repo intentionally excludes raw data/case files; see 报告归档/03_2026-11-25_Pilot定稿与验收/DELIVERY.md.")
         return False
     return True
 
@@ -394,7 +395,7 @@ def main():
     for c in CHECKS:
         print(f"{c['status']:9s} {c['requirement']} / {c['check']} {c['evidence']} {c['note']}")
     print("\nVERDICT:", verdict)
-    print("report: reports/october_acceptance_report.md")
+    print("report: 报告归档/03_2026-11-25_Pilot定稿与验收/october_acceptance_report.md")
     return 0 if verdict != "FAIL" else 1
 
 

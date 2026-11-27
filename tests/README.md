@@ -17,4 +17,4 @@ python tests/test_october_acceptance.py
 - `cases_synthetic/SYN-*/` 下的案件文件
 - `outputs/metrics.json`、`outputs/evidence_units_*.jsonl`
 
-公开 GitHub 仓库**不包含**这些数据（隐私/许可/体积原因）；在全新 clone 上运行会在 preflight 停止，并提示缺少本地数据包。完整本地包见 `DELIVERY.md`。
+公开 GitHub 仓库**不包含**这些数据（隐私/许可/体积原因）；在全新 clone 上运行会在 preflight 停止，并提示缺少本地数据包。完整本地包见 `../报告归档/03_2026-11-25_Pilot定稿与验收/DELIVERY.md`。

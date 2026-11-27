@@ -10,22 +10,22 @@
 
 > **这是 pilot，不是生产系统。** 文本用户与人脸是同年龄、同性别的**配对**，不是同一个真实人；目标变量是性别/年龄段，不是真实身份。
 
-> **仓库范围**：只包含代码、Schema、报告、测试、图表、环境配置。原始数据、30 例案件包中的 `text`/`face`/`evidence`/`result` 文件、模型和证据 JSONL 因隐私、许可和体积原因**不推送**；完整本地包见 [`DELIVERY.md`](DELIVERY.md)。
+> **仓库范围**：只包含代码、Schema、测试、图表、环境配置；所有报告统一归档在工作区根部的 `../报告归档/`。原始数据、30 例案件包中的 `text`/`face`/`evidence`/`result` 文件、模型和证据 JSONL 因隐私、许可和体积原因**不推送**；完整本地包见 [DELIVERY.md](../报告归档/03_2026-11-25_Pilot定稿与验收/DELIVERY.md)。
 
 ## PAN 2018 全量多模态评估（2026-11-26）
 
 在 PAN 2018 Author Profiling 官方训练/测试集全量（EN/ES/AR，7,500 训练 / 5,100 测试用户）上评估文本、图像、融合与冲突处理：
 
-- 报告：[`reports/PAN2018_Multimodal_Gender_Report_2026-11-26.pdf`](reports/PAN2018_Multimodal_Gender_Report_2026-11-26.pdf)
+- 报告：[`../报告归档/05_2026-11-26_PAN2018全量评估/PAN2018_Multimodal_Gender_Report_2026-11-26.pdf`](../报告归档/05_2026-11-26_PAN2018全量评估/PAN2018_Multimodal_Gender_Report_2026-11-26.pdf)
 - 复现脚本：`src/pan18_prepare.py`、`src/pan18_text_model.py`、`src/pan18_text_predict.py`、`src/pan18_image_model.py`、`src/pan18_fusion_eval.py`
 - 数据不进入公共仓库；原始 zip/处理中间件在 `data/` 下。
 - 关键结果：文本 0.792、图像 0.573、堆叠融合 0.795；图像是弱信号，等权/可信度融合反而降到 0.710。
 
 ## PAN 2018 Embedding Concat 融合（2026-11-27）
 
-按 [`Fusion_Strategy_Critique_2026-11-27.pdf`](reports/Fusion_Strategy_Critique_2026-11-27.pdf) 的 P1a 路线，把融合从决策层前移到表示层：XLM-R 对 100 条推文做 4×512 token 分块编码，ViT 对最多 10 张资料图取均值；两侧各投影到 256 维后拼接为 512 维，再接 MLP 端到端训练。官方测试集只在最终评估时打开。
+按 [`Fusion_Strategy_Critique_2026-11-27.pdf`](../报告归档/06_2026-11-27_融合诊断与Concat/Fusion_Strategy_Critique_2026-11-27.pdf) 的 P1a 路线，把融合从决策层前移到表示层：XLM-R 对 100 条推文做 4×512 token 分块编码，ViT 对最多 10 张资料图取均值；两侧各投影到 256 维后拼接为 512 维，再接 MLP 端到端训练。官方测试集只在最终评估时打开。
 
-- 报告：[`reports/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf`](reports/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf)（[Markdown 版](reports/PAN2018_Embedding_Concat_Fusion_2026-11-27.md)）
+- 报告：[`../报告归档/06_2026-11-27_融合诊断与Concat/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf`](../报告归档/06_2026-11-27_融合诊断与Concat/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf)（[Markdown 版](../报告归档/06_2026-11-27_融合诊断与Concat/PAN2018_Embedding_Concat_Fusion_2026-11-27.md)）
 - 脚本：`src/pan18_joint_data.py`、`src/pan18_joint_fusion.py`、`src/make_joint_fusion_figures.py`、`src/build_joint_fusion_report.py`
 - 划分：fit 6,000 / calib 1,500 / test 5,100；fit 与 calib 来自官方训练集，测试集全程隔离。
 - 关键结果：文本 XLM-R 0.8296、十图图像 0.7565、TF-IDF 0.7904、最优 late fusion 0.8600；embedding concat（从零训练 + 逐用户门控）0.8549，相对文本 +2.53 个百分点（McNemar p<0.001），相对 late fusion −0.51 个百分点（p=0.272，统计上持平）；两者 logit 集成 0.8698（相对 late +0.99，p=0.002）。打乱图像对照 0.8153，完整消融见报告。
@@ -41,8 +41,8 @@
 
 - 注入 10 例矛盾证据：冲突检出 **9/10（90%）**，干净集误报 **7/50（14%）**。
 - 冲突处理把注入子集年龄准确率从 0.30 提到 **0.40**，但干净集性别从 0.96 降到 0.92。
-- 详细报告：[`reports/pilot_report.md`](reports/pilot_report.md)
-- 设计说明：[`reports/pilot_design_note.md`](reports/pilot_design_note.md)
+- 详细报告：[`../报告归档/02_2026-11-24_Pilot设计/pilot_report.md`](../报告归档/02_2026-11-24_Pilot设计/pilot_report.md)
+- 设计说明：[`../报告归档/02_2026-11-24_Pilot设计/pilot_design_note.md`](../报告归档/02_2026-11-24_Pilot设计/pilot_design_note.md)
 
 ## 10 月计划补齐情况
 
@@ -50,7 +50,7 @@
 |---|---|
 | 需求调研 / 公开数据可得性 | ✅ 公开数据集已摸底/核验；示范单位脱敏样本待确认 |
 | 原型边界（文本、图像先行） | ✅ text+image 已实现；audio/behavior 预留 stub |
-| 技术方案 / 数据规范 | ✅ v1.0 定稿 | `reports/technical_scheme_and_data_spec_v1.0.md` |
+| 技术方案 / 数据规范 | ✅ v1.0 定稿 | `../报告归档/03_2026-11-25_Pilot定稿与验收/technical_scheme_and_data_spec_v1.0.md` |
 | 统一证据单元 Schema | ✅ v1.0 冻结（项目内） | `src/schema.py` + JSON Schema + 示例 |
 | 30 例样例案件 | ⚠️ **30 个合成案件包**（20 干净 + 10 注入），不是真实案件 |
 | 开发环境 | ✅ pilot Python 环境；`deploy/` 提供项目级 compose |
@@ -60,8 +60,8 @@
 - [`cases_synthetic/`](cases_synthetic/) — 30 个合成案件包（`case.json`、`text.txt`、`face.jpg`、`evidence_units.jsonl`、`result.json`、`case_card.md`），含 20 干净 + 10 注入冲突；**明确标注 synthetic，不是真实案件**。
 - [`src/parsers/`](src/parsers/) — audio/behavior 预留接口（`audio_stub.py`、`behavior_stub.py`），自检 `src/check_stubs.py`。
 - [`schema/`](schema/) — `evidence_unit.schema.json`、`evidence_unit.example.json`（Schema v1.0）。
-- [`reports/technical_scheme_and_data_spec_v1.0.md`](reports/technical_scheme_and_data_spec_v1.0.md) — 技术方案与数据规范 v1.0（含 22 字段表、枚举、约束、版本规则）。
-- [`reports/evidence_unit_v0.1_review.md`](reports/evidence_unit_v0.1_review.md) — v0.1 历史评审稿。
+- [`../报告归档/03_2026-11-25_Pilot定稿与验收/technical_scheme_and_data_spec_v1.0.md`](../报告归档/03_2026-11-25_Pilot定稿与验收/technical_scheme_and_data_spec_v1.0.md) — 技术方案与数据规范 v1.0（含 22 字段表、枚举、约束、版本规则）。
+- [`../报告归档/02_2026-11-24_Pilot设计/evidence_unit_v0.1_review.md`](../报告归档/02_2026-11-24_Pilot设计/evidence_unit_v0.1_review.md) — v0.1 历史评审稿。
 - [`deploy/`](deploy/) — PostgreSQL 14 + MinIO + Redis 的 Docker Compose、初始化 SQL、环境说明。
 
 ## 快速开始
@@ -107,7 +107,7 @@ cd deploy && cp .env.example .env && docker compose up -d
 | 处理后 CSV | `data/processed/` | `smp_train.csv`、`smp_pilot.csv`、`pilot_cases.csv` |
 | 30 例合成案件 | `cases_synthetic/` | 20 干净 + 10 注入；**synthetic，不是真实案件** |
 
-数据调研清单：[`docs/dataset_inventory_2026-11-16.xlsx`](docs/dataset_inventory_2026-11-16.xlsx)（27 个公开数据集、链接、可达性、大小）。
+数据调研清单：[`../报告归档/01_2026-11-16_数据调研/性别年龄推断数据集清单_2026-11-16.xlsx`](../报告归档/01_2026-11-16_数据调研/性别年龄推断数据集清单_2026-11-16.xlsx)（27 个公开数据集、链接、可达性、大小）。
 
 AFAD-Lite 原始归档约 865 MB（27 个分卷），本仓库保留 **60 张采样图**（pilot 用其中 50 张）；重采样说明见 `data/raw/afad/README.txt` 与 `src/extract_afad_samples.py`。
 
@@ -155,7 +155,7 @@ vias_pilot/
 │   └── processed/                # 训练/ pilot CSV
 ├── models/                       # 文本模型（joblib）
 ├── outputs/                      # 证据单元、结果、指标、图
-└── reports/                      # 报告 + 技术方案/数据规范 + 设计说明
+└── reports/                      # 指标 JSON/运行日志（报告已移至 ../报告归档）
 ```
 
 ## 关键限制

@@ -20,7 +20,8 @@ from reportlab.platypus import (CondPageBreak, HRFlowable, Image, KeepTogether,
                                 Table, TableStyle)
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "reports" / "PAN2018_Multimodal_Gender_Report_2026-11-26.pdf"
+ARCHIVE = ROOT.parent / "报告归档"
+OUT = ARCHIVE / "05_2026-11-26_PAN2018全量评估" / "PAN2018_Multimodal_Gender_Report_2026-11-26.pdf"
 FIG_COMP = ROOT / "outputs" / "pan18_figures" / "pan18_composition.png"
 FIG_METHOD = ROOT / "outputs" / "pan18_figures" / "pan18_methods.png"
 FIG_CONF = ROOT / "outputs" / "pan18_figures" / "pan18_confusions.png"
@@ -133,6 +134,7 @@ def fmt(x):
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     global W
     m = json.loads(METRICS.read_text(encoding="utf-8"))
     doc = SimpleDocTemplate(
