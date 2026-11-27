@@ -401,15 +401,17 @@ def main():
     # 7
     story.extend([Paragraph("7　复现", h2)])
     for line in [
-        "python src/pan18_joint_data.py                    # manifest + tokens + 十图特征",
-        "python src/pan18_joint_fusion.py image            # 图像单模态",
-        "python src/pan18_joint_fusion.py text             # XLM-R 文本单模态",
-        "python src/pan18_joint_fusion.py concat           # embedding concat",
-        "python src/pan18_joint_fusion.py concat --shuffle-images  # 打乱图像对照",
-        "python src/pan18_joint_fusion.py late             # 两种 late fusion",
-        "python src/pan18_joint_fusion.py evaluate         # 指标 + 检验",
-        "python src/make_joint_fusion_figures.py            # 图",
-        "python src/build_joint_fusion_report.py            # 本报告",
+        "python src/pan18_joint_data.py --chunks 4             # manifest + 4×512 tokens + 十图特征",
+        "python src/pan18_joint_fusion.py image                 # 图像单模态",
+        "python src/pan18_joint_fusion.py tfidf                 # TF-IDF 参考",
+        "python src/pan18_joint_fusion.py text --chunks 4       # XLM-R 文本单模态",
+        "python src/pan18_joint_fusion.py concat --chunks 4 --gate  # embedding concat（本方案）",
+        "python src/pan18_joint_fusion.py concat --chunks 4 --gate --shuffle-images  # 打乱图像对照",
+        "python src/pan18_joint_fusion.py concat --chunks 4 --gate --init-from models/pan18_joint/text.pt  # 文本初始化消融",
+        "python src/pan18_joint_fusion.py late                  # 两种 late fusion",
+        "python src/pan18_joint_fusion.py evaluate              # 指标 + 检验",
+        "python src/make_joint_fusion_figures.py                # 图",
+        "python src/build_joint_fusion_report.py                # 本报告",
     ]:
         story.append(Paragraph(line, body_ni))
 

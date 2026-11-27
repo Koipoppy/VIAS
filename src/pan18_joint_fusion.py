@@ -734,7 +734,7 @@ def main():
     ap.add_argument("--lr-encoder", type=float, default=2e-5)
     ap.add_argument("--lr-head", type=float, default=1e-3)
     ap.add_argument("--max-len", type=int, default=512)
-    ap.add_argument("--chunks", type=int, default=1,
+    ap.add_argument("--chunks", type=int, default=4,
                     help="number of 512-token chunks per user")
     ap.add_argument("--image-dropout", type=float, default=0.0,
                     help="modality dropout for concat: zero image features with this probability")

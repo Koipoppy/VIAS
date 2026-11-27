@@ -61,13 +61,13 @@ PAN 2018 Author Profiling 官方训练/测试集（EN/ES/AR，7,500 / 5,100 用�
 ## 复现
 
 ```bash
-python src/pan18_joint_data.py                 # manifest + 4×512 tokens + 十图特征
-python src/pan18_joint_fusion.py image         # 图像单模态
-python src/pan18_joint_fusion.py tfidf         # TF-IDF 参考
-python src/pan18_joint_fusion.py text          # XLM-R 文本单模态
-python src/pan18_joint_fusion.py concat --gate
-python src/pan18_joint_fusion.py concat --gate --shuffle-images
-python src/pan18_joint_fusion.py concat --gate --init-from models/pan18_joint/text.pt
+python src/pan18_joint_data.py --chunks 4       # manifest + 4×512 tokens + 十图特征
+python src/pan18_joint_fusion.py image          # 图像单模态
+python src/pan18_joint_fusion.py tfidf          # TF-IDF 参考
+python src/pan18_joint_fusion.py text --chunks 4  # XLM-R 文本单模态
+python src/pan18_joint_fusion.py concat --chunks 4 --gate
+python src/pan18_joint_fusion.py concat --chunks 4 --gate --shuffle-images
+python src/pan18_joint_fusion.py concat --chunks 4 --gate --init-from models/pan18_joint/text.pt
 python src/pan18_joint_fusion.py late
 python src/pan18_joint_fusion.py evaluate
 python src/make_joint_fusion_figures.py

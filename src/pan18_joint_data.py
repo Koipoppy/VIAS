@@ -197,7 +197,7 @@ def main():
     ap.add_argument("--text-model", default="FacebookAI/xlm-roberta-base")
     ap.add_argument("--image-model", default="rizvandwiki/gender-classification")
     ap.add_argument("--max-len", type=int, default=512)
-    ap.add_argument("--chunks", type=int, default=1,
+    ap.add_argument("--chunks", type=int, default=4,
                     help="number of 512-token chunks per user (1 = first chunk only)")
     ap.add_argument("--calib-frac", type=float, default=0.20)
     ap.add_argument("--seed", type=int, default=SEED)
