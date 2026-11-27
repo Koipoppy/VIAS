@@ -522,6 +522,30 @@ def text_tfidf(data_dir: Path, out_dir: Path, seed: int) -> None:
     print("[tfidf] test", json.dumps(binary_metrics(y[test], p[test])), flush=True)
 
 
+def ensemble_fusion(data_dir: Path, out_dir: Path) -> None:
+    """Stack concat and the best late-fusion posterior on calib.
+
+    The two fusion families make complementary errors; a small LR over their
+    logits (plus language) is a practical deployment option.
+    """
+    manifest, _, _, _ = load_data(data_dir, 512)
+    y = labels_of(manifest)
+    calib = (manifest["split"] == "calib").to_numpy()
+    concat = pd.read_csv(out_dir / "concat_probs.csv")["p_female"].to_numpy()
+    late = pd.read_csv(out_dir / "late_stack_probs.csv")["p_female"].to_numpy()
+    feats = np.column_stack([_logit(concat), _logit(late),
+                             pd.get_dummies(manifest["lang"]).to_numpy(dtype=float)])
+    clf = LogisticRegression(max_iter=3000, C=0.5).fit(feats[calib], y[calib])
+    p = clf.predict_proba(feats)[:, 1]
+    probs = manifest[["author_id", "lang", "gender", "split"]].copy()
+    probs["p_female"] = p
+    probs["method"] = "ensemble"
+    probs.to_csv(out_dir / "ensemble_probs.csv", index=False)
+    test = (manifest["split"] == "test").to_numpy()
+    print("[ensemble] calib", json.dumps(binary_metrics(y[calib], p[calib])), flush=True)
+    print("[ensemble] test", json.dumps(binary_metrics(y[test], p[test])), flush=True)
+
+
 # ------------------------------------------------------------------- image / late
 def image_only(data_dir: Path, out_dir: Path, seed: int) -> None:
     manifest, _, _, images = load_data(data_dir, 512)
@@ -622,7 +646,7 @@ def late_fusion(data_dir: Path, out_dir: Path, seed: int) -> None:
 # --------------------------------------------------------------------- evaluate
 METHODS = ["image", "image_vit", "text", "text_tfidf", "late_logpool", "late_stack",
            "concat", "concat_pure", "concat_init", "concat_prob", "concat_shuffled",
-           "crossattn", "crossattn_ens"]
+           "crossattn", "crossattn_ens", "ensemble"]
 
 
 def add_tfidf_baseline(manifest: pd.DataFrame, out_dir: Path, preds: dict) -> None:
@@ -725,7 +749,7 @@ def evaluate(data_dir: Path, out_dir: Path, n_boot: int) -> None:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=["image", "text", "concat", "crossattn", "tfidf",
-                                      "late", "evaluate"])
+                                      "late", "ensemble", "evaluate"])
     ap.add_argument("--data", default="data/processed/pan18_joint")
     ap.add_argument("--out", default="outputs/pan18_joint")
     ap.add_argument("--model-dir", default="models/pan18_joint")
@@ -767,6 +791,8 @@ def main():
                     args.gate)
     elif args.stage == "late":
         late_fusion(data_dir, out_dir, args.seed)
+    elif args.stage == "ensemble":
+        ensemble_fusion(data_dir, out_dir)
     else:
         evaluate(data_dir, out_dir, args.n_boot)
 

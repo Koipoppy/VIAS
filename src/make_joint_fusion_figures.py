@@ -14,7 +14,7 @@ import pandas as pd
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 ORDER = ["image_vit", "image", "text_tfidf", "text", "late_logpool", "late_stack",
-         "concat", "concat_shuffled"]
+         "concat", "ensemble", "concat_shuffled"]
 LABELS = {
     "image_vit": "Image only (ViT 10-img)",
     "image": "Image only (linear)",
@@ -23,6 +23,7 @@ LABELS = {
     "late_logpool": "Late log-pool",
     "late_stack": "Late stack",
     "concat": "Concat (ours)",
+    "ensemble": "Concat + late",
     "concat_shuffled": "Concat, shuffled image",
 }
 COLORS = {
@@ -33,6 +34,7 @@ COLORS = {
     "late_logpool": "#F59F00",
     "late_stack": "#F76707",
     "concat": "#0CA678",
+    "ensemble": "#12B886",
     "concat_shuffled": "#ADB5BD",
 }
 
@@ -80,8 +82,8 @@ def plot_methods(metrics: dict, out: Path) -> None:
 
 
 def plot_per_language(metrics: dict, out: Path) -> None:
-    methods = [m for m in ["image", "text", "late_stack", "concat", "concat_shuffled"]
-               if m in metrics["results"]]
+    methods = [m for m in ["image", "text", "late_stack", "concat", "ensemble",
+                           "concat_shuffled"] if m in metrics["results"]]
     langs = ["en", "es", "ar"]
     x = np.arange(len(langs))
     width = 0.8 / max(len(methods), 1)

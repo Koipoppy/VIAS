@@ -74,6 +74,7 @@ LABELS = [
     ("late_logpool", "late fusion（校准对数意见池）"),
     ("late_stack", "late fusion（堆叠 LR）"),
     ("concat", "embedding concat（门控，本方案）"),
+    ("ensemble", "concat + late 集成（附加）"),
     ("concat_shuffled", "concat + 打乱图像（对照）"),
 ]
 
@@ -167,6 +168,14 @@ def main():
         conclusion += (f"相对最优 late fusion（{late_acc:.4f}）的 Δ 为 "
                        f"{(concat_acc - late_acc) * 100:+.2f} 个百分点，"
                        f"McNemar {pstr(late_p)}。")
+    ens_acc = res.get("ensemble", {}).get("test", {}).get("accuracy")
+    ens_cmp = comp.get("ensemble", {}).get("vs_best_late", {})
+    ens_p = comp.get("ensemble", {}).get("vs_best_late_mcnemar", {}).get("p_value", 1.0)
+    if ens_acc is not None:
+        conclusion += (f"附加观察：把 concat 与 late 的 logit 在 calib 上做小集成，"
+                       f"测试准确率 {ens_acc:.4f}（相对 late "
+                       f"{(ens_acc - late_acc) * 100:+.2f} 个百分点，McNemar {pstr(ens_p)}），"
+                       f"说明两种融合的错误互补。")
     if significant and beats_late:
         verdict = ("结论：concat 同时显著超过文本单模态与最优 late fusion，P1a 验收通过；"
                    "下一步再检验 cross-attention 是否还有额外增量。")
@@ -195,6 +204,9 @@ def main():
          Paragraph(("显著超过文本" if significant else "未显著超过文本") +
                    ("，且显著超过 late fusion" if beats_late else
                     "；与 late fusion 差异不显著" if late_key else ""), table_cell)],
+        [Paragraph("<b>附加</b>", table_cell),
+         Paragraph(f"concat + late 集成 {ens_acc:.4f}；两种融合的错误互补，"
+                   f"可作为部署候选。" if ens_acc is not None else "—", table_cell)],
         [Paragraph("<b>保留</b>", table_cell),
          Paragraph("证据单元、来源/时间/PII、冲突与解释链路继续作为审计层；"
                    "融合结论只由测试集与配对检验给出。", table_cell)],
@@ -372,6 +384,13 @@ def main():
                            numeric_cols=(1, 2, 3, 4),
                            caption_text="表 4　concat 结构消融（同一训练/校准/测试划分）"))
 
+    story.append(Paragraph("5.5　互补性与剩余空间", h3))
+    story.append(Paragraph(
+        "在 5,100 名测试用户上，文本与图像至少一方正确的比例为 0.9347（oracle text|image），"
+        "而两者同时正确的只有 0.6514；这说明多模态证据远未被当前融合头吃干。"
+        "concat 与 late 的预测在 518 人上不一致，oracle 选择可达 0.9082，"
+        "而简单的 logit 集成为 0.8698。差距来自“逐用户判断该信谁”的能力，而不是融合层级本身。", body))
+
     # 6
     story.extend([Paragraph("6　讨论与局限", h2)])
     if significant:
@@ -409,6 +428,7 @@ def main():
         "python src/pan18_joint_fusion.py concat --chunks 4 --gate --shuffle-images  # 打乱图像对照",
         "python src/pan18_joint_fusion.py concat --chunks 4 --gate --init-from models/pan18_joint/text.pt  # 文本初始化消融",
         "python src/pan18_joint_fusion.py late                  # 两种 late fusion",
+        "python src/pan18_joint_fusion.py ensemble              # concat + late 集成",
         "python src/pan18_joint_fusion.py evaluate              # 指标 + 检验",
         "python src/make_joint_fusion_figures.py                # 图",
         "python src/build_joint_fusion_report.py                # 本报告",

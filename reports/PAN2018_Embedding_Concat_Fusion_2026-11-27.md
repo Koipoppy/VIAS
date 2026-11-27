@@ -7,6 +7,7 @@
 - **concat 相对文本单模态显著提升**：0.8549 vs 0.8296（+2.53 个百分点，McNemar p<0.001，bootstrap 95% CI [+1.49, +3.55]）。
 - **concat 与最优 late fusion 统计上持平**：0.8600 vs 0.8549（−0.51 个百分点，McNemar p=0.272，CI [−1.39, +0.37]）。
 - **打乱图像对照降到 0.8153**（相对 concat −3.96 个百分点），说明增益来自图像信息，而不是更多参数。
+- **附加观察：concat + late 的 logit 集成达到 0.8698**，相对 late +0.98（p=0.002），相对 concat +1.49（p<0.001），说明两种融合的错误互补。
 - P1a 验收通过；下一步可进入 P1b（cross-attention）做受控对比。
 
 ## 数据与划分
@@ -30,6 +31,7 @@ PAN 2018 Author Profiling 官方训练/测试集（EN/ES/AR，7,500 / 5,100 用�
 | late fusion（校准对数意见池） | 0.8588 | 0.8588 | 0.9286 | 0.0126 | 0.1041 | +2.92 | <0.001 |
 | late fusion（堆叠 LR） | 0.8600 | 0.8600 | 0.9283 | 0.0137 | 0.1038 | +3.04 | <0.001 |
 | **embedding concat（门控）** | **0.8549** | **0.8549** | **0.9234** | 0.0149 | 0.1071 | **+2.53** | **<0.001** |
+| concat + late 集成（附加） | 0.8698 | 0.8698 | 0.9356 | 0.0069 | 0.0975 | +4.02 | <0.001 |
 | concat + 打乱图像（对照） | 0.8153 | 0.8153 | 0.8845 | 0.0246 | 0.1350 | −1.43 | 0.002 |
 
 概率先在校准集上做温度缩放；Δ 与检验使用校准后的硬预测。AUC 只反映排序，不受温度影响。
@@ -50,6 +52,16 @@ PAN 2018 Author Profiling 官方训练/测试集（EN/ES/AR，7,500 / 5,100 用�
 2. **文本初始化不是必需**：从零训练 + 门控为 0.8549，文本初始化 + 门控为 0.8543，差异在噪声范围内；主方案因此采用从零端到端训练，少一个预训练依赖。
 3. **图像后验作为额外特征反而过拟合**（0.8390），说明高维嵌入本身已包含足够信息，额外塞入决策层概率没有必要。
 
+## 附加观察：concat 与 late 是互补的
+
+在 calib 上用一个 5 参数 LR 对 concat 与 late_stack 的 logit（加语言 one-hot）做集成，测试集达到 **0.8698**：
+
+- 相对 late_stack +0.98 个百分点（McNemar p=0.002）
+- 相对 concat +1.49 个百分点（p<0.001）
+- 分语言：英 0.8558 / 西 0.8882 / 阿 0.8560，三种语言都高于任一单方法
+
+原因在错误结构：concat 与 late 只在 518/5,100 人上预测不一致，oracle 选择可达 0.9082；而文本与图像至少一方正确的 oracle 上限是 0.9347，两者同时正确的只有 0.6514。当前融合只吃掉了互补信息的一小部分，剩余空间主要在“逐用户判断该信谁”，而不是融合层级。
+
 ## 解释与局限
 
 - 十图聚合把图像单模态从首图 0.573 提升到 0.7565，这是 late fusion 在本数据上变强的直接原因；11-27 诊断报告中的“late fusion 无法提升”结论基于首图 0.573 的旧设置，需要按新结果修正。
@@ -69,6 +81,7 @@ python src/pan18_joint_fusion.py concat --chunks 4 --gate
 python src/pan18_joint_fusion.py concat --chunks 4 --gate --shuffle-images
 python src/pan18_joint_fusion.py concat --chunks 4 --gate --init-from models/pan18_joint/text.pt
 python src/pan18_joint_fusion.py late
+python src/pan18_joint_fusion.py ensemble
 python src/pan18_joint_fusion.py evaluate
 python src/make_joint_fusion_figures.py
 python src/build_joint_fusion_report.py
