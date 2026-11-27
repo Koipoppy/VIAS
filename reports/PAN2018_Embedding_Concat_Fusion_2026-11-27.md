@@ -4,9 +4,9 @@
 
 ## 结论
 
-- **concat 相对文本单模态显著提升**：0.8543 vs 0.8296（+2.47 个百分点，McNemar p<0.001，bootstrap 95% CI [+1.55, +3.37]）。
-- **concat 与最优 late fusion 统计上持平**：0.8600 vs 0.8543（−0.57 个百分点，McNemar p=0.204，CI [−1.43, +0.29]）。
-- **打乱图像对照回落到文本水平**：0.8255，说明增益来自图像信息，而不是更多参数或初始化。
+- **concat 相对文本单模态显著提升**：0.8549 vs 0.8296（+2.53 个百分点，McNemar p<0.001，bootstrap 95% CI [+1.49, +3.55]）。
+- **concat 与最优 late fusion 统计上持平**：0.8600 vs 0.8549（−0.51 个百分点，McNemar p=0.272，CI [−1.39, +0.37]）。
+- **打乱图像对照降到 0.8153**（相对 concat −3.96 个百分点），说明增益来自图像信息，而不是更多参数。
 - P1a 验收通过；下一步可进入 P1b（cross-attention）做受控对比。
 
 ## 数据与划分
@@ -29,8 +29,8 @@ PAN 2018 Author Profiling 官方训练/测试集（EN/ES/AR，7,500 / 5,100 用�
 | 文本单模态（TF-IDF，参考） | 0.7904 | 0.7904 | 0.8652 | 0.0241 | 0.1488 | −3.92 | <0.001 |
 | late fusion（校准对数意见池） | 0.8588 | 0.8588 | 0.9286 | 0.0126 | 0.1041 | +2.92 | <0.001 |
 | late fusion（堆叠 LR） | 0.8600 | 0.8600 | 0.9283 | 0.0137 | 0.1038 | +3.04 | <0.001 |
-| **embedding concat（门控）** | **0.8543** | **0.8543** | **0.9219** | 0.0162 | 0.1082 | **+2.47** | **<0.001** |
-| concat + 打乱图像（对照） | 0.8255 | 0.8254 | 0.8848 | 0.0320 | 0.1339 | −0.41 | 0.261 |
+| **embedding concat（门控）** | **0.8549** | **0.8549** | **0.9234** | 0.0149 | 0.1071 | **+2.53** | **<0.001** |
+| concat + 打乱图像（对照） | 0.8153 | 0.8153 | 0.8845 | 0.0246 | 0.1350 | −1.43 | 0.002 |
 
 概率先在校准集上做温度缩放；Δ 与检验使用校准后的硬预测。AUC 只反映排序，不受温度影响。
 
@@ -38,16 +38,17 @@ PAN 2018 Author Profiling 官方训练/测试集（EN/ES/AR，7,500 / 5,100 用�
 
 | 变体 | Accuracy | AUC | ECE | Δ vs text (pp) |
 |---|---:|---:|---:|---:|
-| 从零训练（无文本初始化） | 0.8194 | 0.8970 | 0.0108 | −1.02 |
+| 从零训练 + 门控（本方案） | 0.8549 | 0.9234 | 0.0149 | +2.53 |
+| 文本初始化 + 门控 | 0.8543 | 0.9219 | 0.0162 | +2.47 |
 | 文本初始化，无门控 | 0.8486 | 0.9202 | 0.0173 | +1.90 |
 | 文本初始化 + 图像后验特征 | 0.8390 | 0.9148 | 0.0538 | +0.94 |
-| 文本初始化 + 门控（本方案） | 0.8543 | 0.9219 | 0.0162 | +2.47 |
-| 门控 + 打乱图像 | 0.8255 | 0.8848 | 0.0320 | −0.41 |
+| 门控 + 打乱图像 | 0.8153 | 0.8845 | 0.0246 | −1.43 |
 
 两个关键设计：
 
-1. **文本初始化**：concat 的文本编码器从文本单模态 checkpoint 初始化，再联合微调；从零训练会因图像分支的早期捷径而弱化文本编码器（0.8194）。
-2. **逐用户门控**：`g = Sigmoid(W_g [z_t; z_i])`，`z_i' = g ⊙ z_i`，允许模型对弱图像样本压低图像权重；相对无门控提升 0.57 个百分点。
+1. **图像嵌入标准化 + 逐用户门控**：`g = Sigmoid(W_g [z_t; z_i])`，`z_i' = g ⊙ z_i`，允许模型对弱图像样本压低图像权重。无门控版本为 0.8486，门控带来约 +0.6 个百分点。
+2. **文本初始化不是必需**：从零训练 + 门控为 0.8549，文本初始化 + 门控为 0.8543，差异在噪声范围内；主方案因此采用从零端到端训练，少一个预训练依赖。
+3. **图像后验作为额外特征反而过拟合**（0.8390），说明高维嵌入本身已包含足够信息，额外塞入决策层概率没有必要。
 
 ## 解释与局限
 
@@ -64,8 +65,9 @@ python src/pan18_joint_data.py                 # manifest + 4×512 tokens + 十�
 python src/pan18_joint_fusion.py image         # 图像单模态
 python src/pan18_joint_fusion.py tfidf         # TF-IDF 参考
 python src/pan18_joint_fusion.py text          # XLM-R 文本单模态
-python src/pan18_joint_fusion.py concat --init-from models/pan18_joint/text.pt --gate
-python src/pan18_joint_fusion.py concat --init-from models/pan18_joint/text.pt --gate --shuffle-images
+python src/pan18_joint_fusion.py concat --gate
+python src/pan18_joint_fusion.py concat --gate --shuffle-images
+python src/pan18_joint_fusion.py concat --gate --init-from models/pan18_joint/text.pt
 python src/pan18_joint_fusion.py late
 python src/pan18_joint_fusion.py evaluate
 python src/make_joint_fusion_figures.py

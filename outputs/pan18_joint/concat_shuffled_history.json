@@ -2,7 +2,7 @@
   "config": {
     "epochs": 4,
     "batch_size": 8,
-    "lr_encoder": 1e-05,
+    "lr_encoder": 2e-05,
     "lr_head": 0.001,
     "max_len": 512,
     "seed": 20261127,
@@ -10,31 +10,31 @@
     "limit": null
   },
   "best_epoch": 4,
-  "calib_accuracy": 0.8333333333333334,
+  "calib_accuracy": 0.8086666666666666,
   "history": [
     {
       "epoch": 1,
-      "train_loss": 0.3620411725897963,
-      "calib_accuracy": 0.8213333333333334,
-      "calib_log_loss": 0.722548760781457
+      "train_loss": 0.633849415620168,
+      "calib_accuracy": 0.7053333333333334,
+      "calib_log_loss": 0.5896945503622772
     },
     {
       "epoch": 2,
-      "train_loss": 0.34459757882147096,
-      "calib_accuracy": 0.822,
-      "calib_log_loss": 0.5842526529146325
+      "train_loss": 0.556418089856704,
+      "calib_accuracy": 0.7466666666666667,
+      "calib_log_loss": 0.5323697616571819
     },
     {
       "epoch": 3,
-      "train_loss": 0.26575657790503465,
-      "calib_accuracy": 0.8246666666666667,
-      "calib_log_loss": 0.7714347379749779
+      "train_loss": 0.44690121323863663,
+      "calib_accuracy": 0.7986666666666666,
+      "calib_log_loss": 0.46890488555742454
     },
     {
       "epoch": 4,
-      "train_loss": 0.1904468895822453,
-      "calib_accuracy": 0.8333333333333334,
-      "calib_log_loss": 0.8057615624587151
+      "train_loss": 0.3564135867257913,
+      "calib_accuracy": 0.8086666666666666,
+      "calib_log_loss": 0.5012995959819215
     }
   ]
 }

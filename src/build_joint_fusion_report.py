@@ -156,7 +156,7 @@ def main():
     conclusion = (
         f"本次把融合从决策层前移到表示层：文本用 XLM-R 对 100 条推文做 4×512 token 分块编码，"
         f"图像用 ViT 对最多 10 张照片取均值；两侧各投影到 256 维后拼接为 512 维，再接 MLP。"
-        f"concat 的文本编码器从文本单模态模型初始化后联合微调。"
+        f"concat 的主模型在 fit 上从零端到端训练，文本初始化只作为消融。"
         f"在官方测试集 5,100 人上，文本单模态准确率 {text_acc:.4f}，最优 late fusion "
         f"{late_best:.4f}，embedding concat {concat_acc:.4f}（相对文本 {pct(delta)} 个百分点，"
         f"McNemar {pstr(concat_p)}）。"
@@ -249,9 +249,9 @@ def main():
     story.append(Paragraph(
         "P(female) = MLP([z_t; z_i'])，隐层 256，GELU，dropout 0.2", body_ni))
     story.append(Paragraph(
-        "文本编码器学习率 2e-5（concat 微调时 1e-5），融合头 1e-3，AdamW，OneCycle 调度，"
-        "batch 8，各训练 4 个 epoch；均以 calib 准确率选早停点。concat 的文本编码器从文本单模态"
-        "模型初始化，再联合训练图像投影与融合头，因此 concat 与 text 的差异只来自图像分支及其交互。",
+        "文本编码器与融合头均用学习率 2e-5 / 1e-3，AdamW，OneCycle 调度，batch 8，各训练 4 个 epoch；"
+        "均以 calib 准确率选早停点。图像嵌入先按 fit 统计量标准化；文本初始化消融使用 1e-5 的"
+        "编码器学习率。主模型不使用文本初始化，concat 与 text 的差异只来自图像分支及其交互。",
         body))
     if FIG_SCHEMA.exists():
         story.append(KeepTogether([Image(str(FIG_SCHEMA), width=165 * mm,
@@ -266,7 +266,8 @@ def main():
         ("文本单模态（XLM-R）：", "与 concat 相同的文本编码器，接线性二分类头。"),
         ("late log-pool：", "在 calib 上搜索文本权重 w，p ∝ p_text^w · p_image^(1-w)。"),
         ("late stack：", "在 calib 上以 [logit_text, logit_image, 交互项, 缺失标记, 语言 one-hot] 拟合 LR。"),
-        ("concat（本方案）：", "文本编码器从文本单模态 checkpoint 初始化，图像嵌入标准化后与文本表示各投影 256 维，拼接后接 MLP，再联合微调 4 个 epoch。"),
+        ("concat（本方案）：", "文本编码器与融合头在 fit 上从零端到端训练；图像嵌入标准化后与文本表示各投影 256 维，拼接后接 MLP。"),
+        ("concat + 文本初始化：", "文本编码器从文本单模态 checkpoint 初始化后再联合微调，用于检验迁移是否带来额外增量。"),
         ("concat + 学习门控：", "在拼接前用 [z_t; z_i] 学一个 0–1 门控缩放图像分支，允许逐用户降低弱图像的影响。"),
         ("concat + 打乱图像：", "保持同一初始化、训练预算与结构，只把图像特征在用户间随机打乱，用于检验增益是否来自图像信息。"),
     ]:
@@ -351,10 +352,10 @@ def main():
         "温度只改变概率尺度，不改变排序，因此 Accuracy/AUC 不受影响。校准的作用是让“置信度”"
         "可以作为结果可信度使用，而不是把 max 后验直接当作可信度。", body))
 
-    ab_keys = [("concat_scratch", "从零训练（无文本初始化）"),
+    ab_keys = [("concat", "从零训练 + 门控（=本方案）"),
+               ("concat_init", "文本初始化 + 门控"),
                ("concat_pure", "文本初始化，无门控"),
                ("concat_prob", "文本初始化 + 图像后验特征"),
-               ("concat_gated", "文本初始化 + 门控（=本方案）"),
                ("concat_shuffled", "门控 + 打乱图像")]
     ab_rows = []
     for key, label in ab_keys:
@@ -377,7 +378,8 @@ def main():
         story.append(Paragraph(
             "concat 相对文本单模态达到显著增益，说明图像特征在表示层提供了文本之外的信息，"
             "而不是只在决策层稀释强模态；逐用户门控进一步把弱图像样本的影响压低，使 concat "
-            "与最优 late fusion 的差异不再显著。下一步可以进入 P1b：在同一编码器与划分下，"
+            "与最优 late fusion 的差异不再显著。文本初始化没有带来额外增益（0.8543 vs 0.8549），"
+            "说明从零端到端训练已足够。下一步可以进入 P1b：在同一编码器与划分下，"
             "用 cross-attention 替换 concat，检验 token 级交互是否还有额外增量。", body))
     else:
         story.append(Paragraph(

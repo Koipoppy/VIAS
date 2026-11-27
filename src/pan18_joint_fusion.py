@@ -191,6 +191,70 @@ class ConcatClassifier(nn.Module):
         return self.head(torch.cat([h_text, h_img], dim=1))
 
 
+class CrossAttentionClassifier(nn.Module):
+    """Representation-level fusion: text tokens attend to per-image tokens.
+
+    The text encoder is fine-tuned exactly like the concat baseline; the image
+    encoder stays frozen and only its per-image CLS tokens are consumed here.
+    """
+
+    def __init__(self, model_name: str, image_dim: int, hidden: int = 256,
+                 layers: int = 2, heads: int = 8, dropout: float = 0.2):
+        super().__init__()
+        from transformers import AutoModel
+
+        self.encoder = AutoModel.from_pretrained(model_name)
+        text_dim = self.encoder.config.hidden_size
+        self.text_proj = nn.Linear(text_dim, hidden)
+        self.image_proj = nn.Linear(image_dim + 1, hidden)
+        self.text_norm = nn.LayerNorm(hidden)
+        self.image_norm = nn.LayerNorm(hidden)
+        dec_layer = nn.TransformerDecoderLayer(
+            d_model=hidden, nhead=heads, dim_feedforward=hidden * 4,
+            dropout=dropout, activation="gelu", batch_first=True, norm_first=True,
+        )
+        self.decoder = nn.TransformerDecoder(
+            dec_layer, num_layers=layers, norm=nn.LayerNorm(hidden))
+        self.null_image = nn.Parameter(torch.zeros(1, 1, hidden))
+        self.head = nn.Sequential(
+            nn.Linear(hidden, hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, 2),
+        )
+
+    def encode_tokens(self, input_ids, attention_mask):
+        b, k, length = input_ids.shape
+        out = self.encoder(input_ids=input_ids.reshape(b * k, length),
+                           attention_mask=attention_mask.reshape(b * k, length))
+        h = out.last_hidden_state.view(b, k * length, -1)
+        mask = attention_mask.reshape(b, k * length).bool()
+        return h, mask
+
+    def forward(self, input_ids, attention_mask, image_tokens, image_mask):
+        h_text, text_mask = self.encode_tokens(input_ids, attention_mask)
+        h_text = self.text_norm(self.text_proj(h_text))
+
+        valid = image_mask.to(image_tokens.dtype).unsqueeze(-1)
+        h_img = self.image_norm(self.image_proj(torch.cat([image_tokens, valid], dim=-1)))
+        # Always keep one valid key so authors without images do not produce NaNs.
+        null = self.null_image.expand(h_img.shape[0], -1, -1)
+        h_img = torch.cat([null, h_img], dim=1)
+        img_keep = torch.cat(
+            [torch.ones(image_mask.shape[0], 1, dtype=torch.bool, device=image_mask.device),
+             image_mask.bool()], dim=1)
+
+        h_text = self.decoder(
+            h_text, h_img,
+            tgt_key_padding_mask=~text_mask,
+            memory_key_padding_mask=~img_keep,
+        )
+        weights = text_mask.to(h_text.dtype)
+        weights = weights / weights.sum(1, keepdim=True).clamp(min=1.0)
+        pooled = (h_text * weights.unsqueeze(-1)).sum(1)
+        return self.head(pooled), None
+
+
 @dataclass
 class Tensors:
     input_ids: torch.Tensor
@@ -198,24 +262,36 @@ class Tensors:
     image_emb: torch.Tensor
     image_valid: torch.Tensor
     y: torch.Tensor
+    image_tokens: torch.Tensor | None = None
+    image_mask: torch.Tensor | None = None
 
 
 def build_tensors(manifest, input_ids, attention_mask, images, idx, seed=None,
-                  img_mean=None, img_std=None):
+                  img_mean=None, img_std=None, per_image=None, per_image_mask=None):
     emb = images["emb"][idx].astype(np.float32)
     if img_mean is not None and img_std is not None:
         emb = (emb - img_mean) / img_std
     valid = images["valid"][idx].astype(np.float32)
+    perm = None
     if seed is not None:
         rng = np.random.default_rng(seed)
         perm = rng.permutation(len(idx))
         emb = emb[perm]
+    image_tokens = image_mask = None
+    if per_image is not None:
+        image_tokens = per_image[idx].astype(np.float32)
+        image_mask = per_image_mask[idx].astype(bool)
+        if perm is not None:
+            image_tokens = image_tokens[perm]
+            image_mask = image_mask[perm]
     return Tensors(
         input_ids=torch.from_numpy(input_ids[idx].astype(np.int64)),
         attention_mask=torch.from_numpy(attention_mask[idx].astype(np.int64)),
         image_emb=torch.from_numpy(emb),
         image_valid=torch.from_numpy(valid),
         y=torch.from_numpy(labels_of(manifest)[idx]),
+        image_tokens=(torch.from_numpy(image_tokens) if image_tokens is not None else None),
+        image_mask=(torch.from_numpy(image_mask) if image_mask is not None else None),
     )
 
 
@@ -224,24 +300,33 @@ def iterate(t: Tensors, batch_size: int, shuffle: bool):
     order = np.random.permutation(n) if shuffle else np.arange(n)
     for start in range(0, n, batch_size):
         idx = order[start:start + batch_size]
-        yield {
+        batch = {
             "input_ids": t.input_ids[idx],
             "attention_mask": t.attention_mask[idx],
             "image_emb": t.image_emb[idx],
             "image_valid": t.image_valid[idx],
             "y": t.y[idx],
         }
+        if t.image_tokens is not None:
+            batch["image_tokens"] = t.image_tokens[idx]
+            batch["image_mask"] = t.image_mask[idx]
+        yield batch
 
 
 @torch.no_grad()
-def predict(model, t: Tensors, batch_size: int = 64, use_images: bool = False) -> np.ndarray:
+def predict(model, t: Tensors, batch_size: int = 64, use_images: bool = False,
+            use_image_tokens: bool = False) -> np.ndarray:
     model.eval()
     probs = []
     for batch in iterate(t, batch_size, shuffle=False):
         ids = batch["input_ids"].cuda(non_blocking=True)
         mask = batch["attention_mask"].cuda(non_blocking=True)
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            if use_images:
+            if use_image_tokens:
+                logits, _ = model(ids, mask,
+                                  batch["image_tokens"].cuda(non_blocking=True),
+                                  batch["image_mask"].cuda(non_blocking=True))
+            elif use_images:
                 logits = model(ids, mask, batch["image_emb"].cuda(non_blocking=True),
                                batch["image_valid"].cuda(non_blocking=True))
             else:
@@ -259,6 +344,13 @@ def train_model(kind: str, data_dir: Path, model_dir: Path, out_dir: Path, epoch
     manifest, input_ids, attention_mask, images = load_data(data_dir, max_len, chunks)
     if input_ids is None:
         raise SystemExit(f"missing token cache for chunks={chunks}")
+    per_image = per_image_mask = None
+    if kind == "crossattn":
+        token_path = data_dir / "image_tokens.npz"
+        if not token_path.exists():
+            raise SystemExit(f"missing per-image cache: {token_path}")
+        tokens = np.load(token_path)
+        per_image, per_image_mask = tokens["emb_images"], tokens["image_mask"]
     if image_prob_feature:
         images = {"emb": np.concatenate(
                       [images["emb"].astype(np.float32),
@@ -289,15 +381,19 @@ def train_model(kind: str, data_dir: Path, model_dir: Path, out_dir: Path, epoch
                                 components=pca.components_, mean=pca.mean_,
                                 explained=pca.explained_variance_ratio_)
     t_fit = build_tensors(manifest, input_ids, attention_mask, images, fit_idx, img_seed,
-                          img_mean, img_std)
+                          img_mean, img_std, per_image, per_image_mask)
     t_cal = build_tensors(manifest, input_ids, attention_mask, images, calib_idx, img_seed,
-                          img_mean, img_std)
+                          img_mean, img_std, per_image, per_image_mask)
 
     torch.manual_seed(seed)
     np.random.seed(seed)
-    image_dim = images["emb"].shape[1]
-    model = (ConcatClassifier(TEXT_MODEL, image_dim, dropout=dropout, gated=gated)
-             if kind == "concat" else TextClassifier(TEXT_MODEL, dropout=dropout)).cuda()
+    image_dim = int(per_image.shape[2]) if kind == "crossattn" else images["emb"].shape[1]
+    if kind == "concat":
+        model = ConcatClassifier(TEXT_MODEL, image_dim, dropout=dropout, gated=gated).cuda()
+    elif kind == "crossattn":
+        model = CrossAttentionClassifier(TEXT_MODEL, image_dim, dropout=dropout).cuda()
+    else:
+        model = TextClassifier(TEXT_MODEL, dropout=dropout).cuda()
     if init_from and kind == "concat":
         ckpt = torch.load(init_from, map_location="cpu")
         enc = {k: v for k, v in ckpt["state"].items() if k.startswith("encoder.")}
@@ -314,7 +410,8 @@ def train_model(kind: str, data_dir: Path, model_dir: Path, out_dir: Path, epoch
     steps = math.ceil(len(fit_idx) / batch_size) * epochs
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer, max_lr=[lr_encoder, lr_head], total_steps=steps, pct_start=0.1)
-    use_images = kind == "concat"
+    use_images = kind in {"concat", "crossattn"}
+    use_image_tokens = kind == "crossattn"
 
     best = {"acc": -1.0, "ll": 1e9, "epoch": -1, "state": None}
     history = []
@@ -327,7 +424,12 @@ def train_model(kind: str, data_dir: Path, model_dir: Path, out_dir: Path, epoch
             y = batch["y"].cuda(non_blocking=True)
             optimizer.zero_grad(set_to_none=True)
             with torch.autocast("cuda", dtype=torch.bfloat16):
-                if use_images:
+                if use_image_tokens:
+                    logits, _ = model(
+                        ids, mask,
+                        batch["image_tokens"].cuda(non_blocking=True),
+                        batch["image_mask"].cuda(non_blocking=True))
+                elif use_images:
                     img = batch["image_emb"].cuda(non_blocking=True)
                     if image_dropout > 0:
                         keep = (torch.rand(img.shape[0], 1, device=img.device)
@@ -344,7 +446,8 @@ def train_model(kind: str, data_dir: Path, model_dir: Path, out_dir: Path, epoch
             scheduler.step()
             total += float(loss.detach()) * len(y)
             seen += len(y)
-        cal_p = predict(model, t_cal, use_images=use_images)
+        cal_p = predict(model, t_cal, use_images=use_images,
+                        use_image_tokens=use_image_tokens)
         acc = float(accuracy_score(t_cal.y.numpy(), (cal_p >= 0.5).astype(int)))
         ll = float(log_loss(t_cal.y.numpy(), np.clip(cal_p, 1e-9, 1 - 1e-9), labels=[0, 1]))
         history.append({"epoch": epoch, "train_loss": total / max(seen, 1),
@@ -365,16 +468,18 @@ def train_model(kind: str, data_dir: Path, model_dir: Path, out_dir: Path, epoch
 
     all_idx = np.arange(len(manifest))
     t_all = build_tensors(manifest, input_ids, attention_mask, images, all_idx, img_seed,
-                          img_mean, img_std)
-    p_all = predict(model, t_all, use_images=use_images)
+                          img_mean, img_std, per_image, per_image_mask)
+    p_all = predict(model, t_all, use_images=use_images,
+                    use_image_tokens=use_image_tokens)
     probs = manifest[["author_id", "lang", "gender", "split"]].copy()
     probs["p_female"] = p_all
     probs["method"] = name
     probs.to_csv(out_dir / f"{name}_probs.csv", index=False)
     (out_dir / f"{name}_history.json").write_text(json.dumps({
         "config": {"epochs": epochs, "batch_size": batch_size, "lr_encoder": lr_encoder,
-                   "lr_head": lr_head, "max_len": max_len, "seed": seed,
-                   "shuffle_images": shuffle_images, "limit": limit},
+                   "lr_head": lr_head, "max_len": max_len, "chunks": chunks, "seed": seed,
+                   "shuffle_images": shuffle_images, "limit": limit,
+                   "per_image": kind == "crossattn"},
         "best_epoch": best["epoch"], "calib_accuracy": best["acc"], "history": history,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"[{kind}] saved {out_dir / f'{name}_probs.csv'} best_epoch={best['epoch']}",
@@ -516,8 +621,8 @@ def late_fusion(data_dir: Path, out_dir: Path, seed: int) -> None:
 
 # --------------------------------------------------------------------- evaluate
 METHODS = ["image", "image_vit", "text", "text_tfidf", "late_logpool", "late_stack",
-           "concat", "concat_pure", "concat_scratch", "concat_prob", "concat_gated",
-           "concat_shuffled"]
+           "concat", "concat_pure", "concat_init", "concat_prob", "concat_shuffled",
+           "crossattn", "crossattn_ens"]
 
 
 def add_tfidf_baseline(manifest: pd.DataFrame, out_dir: Path, preds: dict) -> None:
@@ -619,7 +724,8 @@ def evaluate(data_dir: Path, out_dir: Path, n_boot: int) -> None:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["image", "text", "concat", "tfidf", "late", "evaluate"])
+    ap.add_argument("stage", choices=["image", "text", "concat", "crossattn", "tfidf",
+                                      "late", "evaluate"])
     ap.add_argument("--data", default="data/processed/pan18_joint")
     ap.add_argument("--out", default="outputs/pan18_joint")
     ap.add_argument("--model-dir", default="models/pan18_joint")
@@ -653,7 +759,7 @@ def main():
         image_only(data_dir, out_dir, args.seed)
     elif args.stage == "tfidf":
         text_tfidf(data_dir, out_dir, args.seed)
-    elif args.stage in {"text", "concat"}:
+    elif args.stage in {"text", "concat", "crossattn"}:
         train_model(args.stage, data_dir, Path(args.model_dir), out_dir, args.epochs,
                     args.batch_size, args.lr_encoder, args.lr_head, args.max_len, args.seed,
                     args.shuffle_images, args.limit, args.chunks, args.image_dropout,
