@@ -23,3 +23,8 @@ outputs/pan18/fusion_predictions.csv
 outputs/pan18_joint/*_probs.csv
 reports/_preview/
 vias_system/var/
+
+# PAN18 cross-attention local checkpoints and per-user predictions
+outputs/pan18_joint/baseline_*/
+outputs/pan18_joint/crossattn_local_*/
+slurm/*.log
