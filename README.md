@@ -27,7 +27,7 @@
 
 - 报告：[`../报告归档/06_2026-11-27_融合诊断与Concat/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf`](../报告归档/06_2026-11-27_融合诊断与Concat/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf)（[Markdown 版](../报告归档/06_2026-11-27_融合诊断与Concat/PAN2018_Embedding_Concat_Fusion_2026-11-27.md)）
 - 四种融合方式对比：[`../报告归档/07_2026-11-27_四种融合对比/PAN2018_Four_Fusion_Comparison_2026-11-27.pdf`](../报告归档/07_2026-11-27_四种融合对比/PAN2018_Four_Fusion_Comparison_2026-11-27.pdf)（[Markdown 版](../报告归档/07_2026-11-27_四种融合对比/PAN2018_Four_Fusion_Comparison_2026-11-27.md)）
-- 脚本：`src/pan18_joint_data.py`、`src/pan18_joint_fusion.py`、`src/make_joint_fusion_figures.py`、`src/build_joint_fusion_report.py`、`src/make_three_fusion_figures.py`、`src/build_three_fusion_report.py`
+- 脚本：`src/pan18_joint_data.py`、`src/pan18_joint_fusion.py`、`src/make_joint_fusion_figures.py`、`src/build_joint_fusion_report.py`、`src/make_four_fusion_figures.py`、`src/build_four_fusion_report.py`、`src/eval_fusion_attribution.py`
 - 划分：fit 6,000 / calib 1,500 / test 5,100；fit 与 calib 来自官方训练集，测试集全程隔离。
 - 关键结果：文本 XLM-R 0.8296、十图图像 0.7565、TF-IDF 0.7904、最优 late fusion 0.8600；embedding concat（从零训练 + 逐用户门控）0.8549，相对文本 +2.53 个百分点（McNemar p<0.001），相对 late fusion −0.51 个百分点（p=0.272，统计上持平）；两者 logit 集成 0.8698（相对 late +0.99，p=0.002）。打乱图像对照 0.8153，完整消融见报告。
 
