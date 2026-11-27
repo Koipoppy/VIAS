@@ -13,6 +13,20 @@ from sklearn.metrics import accuracy_score, f1_score
 from pan18_text_model import read_tweets
 
 
+def load_bundle(path):
+    """Load a TF-IDF bundle across sklearn minor versions.
+
+    Models trained with sklearn>=1.7 no longer carry ``multi_class``; sklearn
+    1.6 still reads it in predict_proba. For the binary gender task the value
+    does not change the decision rule, so restore the old default.
+    """
+    bundle = joblib.load(path)
+    model = bundle["model"]
+    if not hasattr(model, "multi_class"):
+        model.multi_class = "auto"
+    return bundle
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--test-manifest", required=True)
@@ -31,7 +45,7 @@ def main():
         model_path = Path(args.model_dir) / f"{lang}_text.joblib"
         if len(d) == 0 or not model_path.exists():
             continue
-        bundle = joblib.load(model_path)
+        bundle = load_bundle(model_path)
         proba = bundle["model"].predict_proba(bundle["vectorizer"].transform(d["text"]))
         classes = list(bundle["model"].classes_)
         female = proba[:, classes.index("female")]
