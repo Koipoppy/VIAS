@@ -31,6 +31,15 @@
 - 划分：fit 6,000 / calib 1,500 / test 5,100；fit 与 calib 来自官方训练集，测试集全程隔离。
 - 关键结果：文本 XLM-R 0.8296、十图图像 0.7565、TF-IDF 0.7904、最优 late fusion 0.8600；embedding concat（从零训练 + 逐用户门控）0.8549，相对文本 +2.53 个百分点（McNemar p<0.001），相对 late fusion −0.51 个百分点（p=0.272，统计上持平）；两者 logit 集成 0.8698（相对 late +0.99，p=0.002）。打乱图像对照 0.8153，完整消融见报告。
 
+## 音频多模态测试（2026-11-28）
+
+用 CREMA-D 构建音频+人脸同人的 232 例测试集（58 位演员，20–40 岁），并用 SMP 2016 pilot 文本做同性别/同年龄段的合成配对；按演员隔离 fit 112 / calib 60 / test 60。
+
+- 数据集卡：[`../报告归档/08_2026-11-28_音频多模态测试/AUDIO_MULTIMODAL_DATASET_2026-11-28.md`](../报告归档/08_2026-11-28_音频多模态测试/AUDIO_MULTIMODAL_DATASET_2026-11-28.md)
+- 报告：[PDF](../报告归档/08_2026-11-28_音频多模态测试/AUDIO_MULTIMODAL_FUSION_REPORT_2026-11-28.pdf)（[Markdown](../报告归档/08_2026-11-28_音频多模态测试/AUDIO_MULTIMODAL_FUSION_REPORT_2026-11-28.md)）
+- 脚本：`src/audio_prepare_crema.py`、`src/audio_extract_audio.py`、`src/audio_extract_face.py`、`src/audio_build_cases.py`、`src/audio_train_heads.py`、`src/audio_eval_final.py`
+- 关键结果：音频性别校准后 1.000（表演语音易任务）；音频年龄 zero-shot 原始 MAE≈14.7 岁→线性校准 4.02；文本年龄 3.63；文本+人脸融合年龄桶 0.500；音频缺失时文本+人脸性别 0.883。
+
 ## 结果速览
 
 | 方法 | 性别 Acc | 年龄 Acc | 年龄 MAE |
