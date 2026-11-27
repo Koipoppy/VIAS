@@ -10,16 +10,18 @@
 
 ```text
 VIAS/
-├── vias_pilot/        # pilot 归档：50 例实验、报告、Schema 评审稿、历史脚本
-├── vias_system/       # 完全体服务：本项目当前唯一运行时实现
+├── vias_pilot/            # git 仓库；pilot 归档 + vias_system 源码
+│   └── vias_system/       # git 跟踪的服务源码（source of truth）
+├── vias_system/           # 工作区运行时副本：models/、var/ 只在这里
 ├── vias_pilot_handoff_2026-11-24.zip
 ├── vias_system_handoff_2026-11-25.zip
 └── 性别年龄推断数据集清单_2026-11-16.xlsx
 ```
 
 - **`vias_pilot` 是冻结的历史基线**：保留 50 例结果、报告和实验脚本，便于复核；不再作为运行时依赖。
-- **`vias_system` 是 canonical 实现**：Schema、可信度、融合、冲突、解释和 API 都以这里为准。
-- 两边不共享导入路径，避免“改 pilot 影响服务”或“改服务破坏历史实验”。代价是 core 有少量重复；这是有意的边界，不是隐性耦合。
+- **`vias_pilot/vias_system` 是服务源码的唯一 git 来源**；工作区根部的 `vias_system/` 是运行时副本，内置模型与 SQLite 只放在这里。
+- 两边代码必须一致：修改后运行 `python scripts/sync_system_copy.py`（`--check` 只校验）。`models/`、`var/`、`__pycache__` 不参与同步。
+- pilot 与服务不共享导入路径，避免“改 pilot 影响服务”或“改服务破坏历史实验”。代价是 core 有少量重复；这是有意的边界，不是隐性耦合。
 
 ---
 

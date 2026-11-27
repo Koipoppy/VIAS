@@ -29,7 +29,7 @@
 | 音频接入 | `audio_stub`；有 `asr_text` 时走文本模型形成属性证据，无 ASR 时 reserved | ⚠️ 样例链路 |
 | 行为日志接入 | `behavior_stub`；解析事件数/类型/IP/设备，暂不产出身份概率 | ⚠️ 样例链路 |
 | 格式归一化/统一 Token | 统一为 `EvidenceUnit`，而非 BPE/ViT/Whisper Token 序列 | ⚠️ 结构化替代 |
-| 跨模态语义对齐 | 通过候选身份层/属性兼容做证据融合；未接 CLIP/Q-Former | ⚠️ 未接大模型 |
+| 跨模态语义对齐 | pilot 已实现 embedding concat（XLM-R 4×512 分块 + 十图 ViT，文本初始化 + 逐用户门控）：PAN18 测试 0.8543 vs 文本 0.8296（+2.47 pt，p<0.001），与最优 late fusion 0.8600 差异不显著（p=0.204）；服务默认仍是决策级 late fusion | ⚠️ 特征级已跑通，服务未接入 |
 | 证据结构化 | 23 字段 EvidenceUnit，JSON Schema v1.1 | ✅ |
 | 单证据可信度 | 六维：来源、权威、客观、时效、完整、一致 | ✅ |
 | 可信度加权 | `ω=(weight×multiplier)^weight_power`，默认 1.5 | ✅ |

@@ -111,7 +111,9 @@ python scripts/benchmark_conflict.py
 - `docs/ARCHITECTURE.md` 记录分层、依赖规则、ADR、扩展点、技术债；
 - `docs/VIAS_Full_System_API_Solution.md` 同步 API、默认阈值、weight_power；
 - 测试从 10 个扩到 36 个；新增 `tests/test_core.py`；
-- 增加 `scripts/benchmark_conflict.py`，让改进可复现。
+- 增加 `scripts/benchmark_conflict.py`，让改进可复现；
+- **依赖锁定（2026-11-27）**：`scikit-learn` 固定为 `>=1.6,<1.7`，并用 1.6.1 重训 `models/text_*.joblib`。此前模型由 sklearn 1.9 生成、被 1.6 加载，`multi_class` 属性缺失导致 3 个用例失败；重训后 36/36 通过。
+- **双副本同步（2026-11-27）**：`vias_pilot/vias_system` 为 git 源码，工作区根部 `vias_system/` 为运行时副本；`scripts/sync_system_copy.py --check` 校验一致，`models/`、`var/` 不参与同步。
 
 ---
 

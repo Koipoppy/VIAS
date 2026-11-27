@@ -1,0 +1,40 @@
+{
+  "config": {
+    "epochs": 4,
+    "batch_size": 8,
+    "lr_encoder": 2e-05,
+    "lr_head": 0.001,
+    "max_len": 512,
+    "seed": 20261127,
+    "shuffle_images": false,
+    "limit": null
+  },
+  "best_epoch": 4,
+  "calib_accuracy": 0.8246666666666667,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6534447470903396,
+      "calib_accuracy": 0.7106666666666667,
+      "calib_log_loss": 0.5783923702250376
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.5191734396914641,
+      "calib_accuracy": 0.814,
+      "calib_log_loss": 0.41428577778883163
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3711992413848639,
+      "calib_accuracy": 0.816,
+      "calib_log_loss": 0.5181306938157398
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.280500118071679,
+      "calib_accuracy": 0.8246666666666667,
+      "calib_log_loss": 0.5040140462059305
+    }
+  ]
+}

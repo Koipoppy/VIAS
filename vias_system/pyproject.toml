@@ -14,7 +14,9 @@ dependencies = [
   "pydantic>=2.7,<3",
   "joblib>=1.4",
   "numpy>=1.26",
-  "scikit-learn>=1.4",
+  # Pinned to the version that produced models/*.joblib: sklearn does not
+  # guarantee cross-minor pickle compatibility (1.9 -> 1.6 drops multi_class).
+  "scikit-learn>=1.6,<1.7",
   "pillow>=10",
 ]
 

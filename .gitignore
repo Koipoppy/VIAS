@@ -20,5 +20,6 @@ deploy/.env
 
 # Pan18 full-run per-user predictions and previews
 outputs/pan18/fusion_predictions.csv
+outputs/pan18_joint/*_probs.csv
 reports/_preview/
 vias_system/var/

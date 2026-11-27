@@ -21,6 +21,15 @@
 - 数据不进入公共仓库；原始 zip/处理中间件在 `data/` 下。
 - 关键结果：文本 0.792、图像 0.573、堆叠融合 0.795；图像是弱信号，等权/可信度融合反而降到 0.710。
 
+## PAN 2018 Embedding Concat 融合（2026-11-27）
+
+按 [`Fusion_Strategy_Critique_2026-11-27.pdf`](reports/Fusion_Strategy_Critique_2026-11-27.pdf) 的 P1a 路线，把融合从决策层前移到表示层：XLM-R 对 100 条推文做 4×512 token 分块编码，ViT 对最多 10 张资料图取均值；两侧各投影到 256 维后拼接为 512 维，再接 MLP 端到端训练。官方测试集只在最终评估时打开。
+
+- 报告：[`reports/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf`](reports/PAN2018_Embedding_Concat_Fusion_2026-11-27.pdf)（[Markdown 版](reports/PAN2018_Embedding_Concat_Fusion_2026-11-27.md)）
+- 脚本：`src/pan18_joint_data.py`、`src/pan18_joint_fusion.py`、`src/make_joint_fusion_figures.py`、`src/build_joint_fusion_report.py`
+- 划分：fit 6,000 / calib 1,500 / test 5,100；fit 与 calib 来自官方训练集，测试集全程隔离。
+- 关键结果：文本 XLM-R 0.8296、十图图像 0.7565、TF-IDF 0.7904、最优 late fusion 0.8600；embedding concat（文本初始化 + 逐用户门控）0.8543，相对文本 +2.47 个百分点（McNemar p<0.001），相对 late fusion −0.57 个百分点（p=0.204，统计上持平）。打乱图像对照与完整消融见报告。
+
 ## 结果速览
 
 | 方法 | 性别 Acc | 年龄 Acc | 年龄 MAE |
@@ -115,6 +124,8 @@ AFAD-Lite 原始归档约 865 MB（27 个分卷），本仓库保留 **60 张采
 | `outputs/figures/*.png` | 图表 |
 | `reports/text_model_metrics.json` | 文本模型指标 |
 | `reports/face_model_metrics.json` | 人脸模型指标 |
+| `outputs/pan18_joint/metrics.json` | embedding concat 全量指标与检验 |
+| `outputs/pan18_joint/pan18_joint_*.png` | concat 方法对比、分语言、结构图 |
 
 ## 目录结构
 
