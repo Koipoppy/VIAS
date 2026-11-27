@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Figures for the PAN18 three-way fusion comparison report."""
+"""Figures for the PAN18 four-way fusion comparison report."""
 from __future__ import annotations
 
 import json
@@ -13,18 +13,19 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE = ROOT.parent / "报告归档"
-OUT = ARCHIVE / "07_2026-11-27_三种融合对比"
+OUT = ARCHIVE / "07_2026-11-27_四种融合对比"
 BASE = ROOT / "outputs" / "pan18_joint" / "metrics.json"
 CROSS = ROOT / "outputs" / "pan18_joint" / "crossattn_2026-11-27" / "metrics_crossattn.json"
+ATTR = OUT / "four_fusion_attribution.json"
 
 METHODS = ["text", "image", "late_stack", "concat", "crossattn_ens", "ensemble"]
 LABELS = {
     "text": "Text only",
     "image": "Image only",
-    "late_stack": "Late fusion",
-    "concat": "Embedding concat",
-    "crossattn_ens": "Cross-attention",
-    "ensemble": "Concat + late",
+    "late_stack": "① Late fusion",
+    "concat": "② Embedding concat",
+    "crossattn_ens": "③ Cross-attention",
+    "ensemble": "④ Concat + late",
 }
 COLORS = {
     "text": "#4C6EF5",
@@ -78,7 +79,7 @@ def plot_overall(rows, out: Path):
             ax.axvline(rows["text"]["acc"], color=COLORS["text"], linestyle="--",
                        linewidth=0.9, alpha=0.8)
     fig.tight_layout()
-    fig.savefig(out / "three_fusion_overall.png", dpi=300, bbox_inches="tight")
+    fig.savefig(out / "four_fusion_overall.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -87,7 +88,7 @@ def plot_per_language(rows, out: Path):
     langs = ["en", "es", "ar"]
     x = np.arange(len(langs))
     width = 0.8 / len(keys)
-    fig, ax = plt.subplots(figsize=(8.6, 4.1))
+    fig, ax = plt.subplots(figsize=(8.8, 4.1))
     for i, k in enumerate(keys):
         vals = [rows[k]["per_lang"][l] for l in langs]
         ax.bar(x + (i - (len(keys) - 1) / 2) * width, vals, width,
@@ -100,7 +101,7 @@ def plot_per_language(rows, out: Path):
     ax.set_axisbelow(True)
     ax.legend(fontsize=8, ncol=2, frameon=False, loc="lower right")
     fig.tight_layout()
-    fig.savefig(out / "three_fusion_per_language.png", dpi=300, bbox_inches="tight")
+    fig.savefig(out / "four_fusion_per_language.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -127,7 +128,35 @@ def plot_seeds(cross, out: Path):
         ax.text(b.get_x() + b.get_width() / 2, v + 0.002, f"{v:.4f}",
                 ha="center", fontsize=8.5)
     fig.tight_layout()
-    fig.savefig(out / "three_fusion_crossattn_seeds.png", dpi=300, bbox_inches="tight")
+    fig.savefig(out / "four_fusion_crossattn_seeds.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_attribution(out: Path):
+    data = json.loads(ATTR.read_text(encoding="utf-8"))
+    keys = ["old_text_old_image", "new_text_old_image", "old_text_new_image", "new_text_new_image"]
+    labels = ["Old text + old image", "New text + old image",
+              "Old text + new image", "New text + new image"]
+    vals = [data["results"][k]["accuracy"] for k in keys]
+    base = vals[0]
+    fig, ax = plt.subplots(figsize=(8.6, 4.0))
+    colors = ["#ADB5BD", "#4C6EF5", "#F59F00", "#0CA678"]
+    bars = ax.bar(labels, vals, color=colors, width=0.6)
+    ax.axhline(base, color="#495057", linestyle="--", linewidth=0.9,
+               label=f"old + old = {base:.4f}")
+    ax.set_ylim(0.75, 0.89)
+    ax.set_ylabel("Accuracy")
+    ax.grid(axis="y", color="#E9ECEF", linewidth=0.8)
+    ax.set_axisbelow(True)
+    ax.legend(fontsize=8, frameon=False, loc="lower right")
+    for b, v in zip(bars, vals):
+        delta = (v - base) * 100
+        text = f"{v:.4f}" + (f"\n({delta:+.2f} pp)" if b is not bars[0] else "")
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.003, text,
+                ha="center", va="bottom", fontsize=8.5)
+    plt.setp(ax.get_xticklabels(), fontsize=8.5)
+    fig.tight_layout()
+    fig.savefig(out / "four_fusion_attribution.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -137,7 +166,9 @@ def main():
     plot_overall(rows, OUT)
     plot_per_language(rows, OUT)
     plot_seeds(cross, OUT)
-    pd.DataFrame(rows).T.to_csv(OUT / "three_fusion_metrics.csv", encoding="utf-8-sig")
+    if ATTR.exists():
+        plot_attribution(OUT)
+    pd.DataFrame(rows).T.to_csv(OUT / "four_fusion_metrics.csv", encoding="utf-8-sig")
     print("figures written to", OUT)
 
 
