@@ -39,6 +39,7 @@
 - 报告：[PDF](../报告归档/08_2026-11-28_音频多模态测试/AUDIO_MULTIMODAL_FUSION_REPORT_2026-11-28.pdf)（[Markdown](../报告归档/08_2026-11-28_音频多模态测试/AUDIO_MULTIMODAL_FUSION_REPORT_2026-11-28.md)）
 - 脚本：`src/audio_prepare_crema.py`、`src/audio_extract_audio.py`、`src/audio_extract_face.py`、`src/audio_build_cases.py`、`src/audio_train_heads.py`、`src/audio_eval_final.py`
 - 关键结果：音频性别校准后 1.000（表演语音易任务）；音频年龄 zero-shot 原始 MAE≈14.7 岁→线性校准 4.02；文本年龄 3.63；文本+人脸融合年龄桶 0.500；音频缺失时文本+人脸性别 0.883。
+- 融合方案对比：[PDF](../报告归档/09_2026-11-28_音频融合方案对比/AUDIO_FUSION_SCHEMES_REPORT_2026-11-28.pdf)（[Markdown](../报告归档/09_2026-11-28_音频融合方案对比/AUDIO_FUSION_SCHEMES_REPORT_2026-11-28.md)）
 
 ## 结果速览
 
